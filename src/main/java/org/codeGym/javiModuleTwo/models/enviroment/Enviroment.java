@@ -8,12 +8,13 @@ import org.codeGym.javiModuleTwo.models.herbivore.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class Enviroment {
     private int enviromentWidth =5;
     private int enviromentHeight =5;
-    private final List<Object>[][] enviromentContainer = new ArrayList[enviromentWidth][enviromentHeight];;
+    private final List<Object>[][] enviromentContainer = new ArrayList[enviromentWidth][enviromentHeight];
 
     public Enviroment(){};
 
@@ -41,14 +42,27 @@ public class Enviroment {
             }
         }
 
-        public int determineNumberOfCreaturesByCell(){
+        public List<Object>[][] determineNumberOfCreaturesByCell() {
             System.out.println("2. Hola determineNumberOfCreaturesByCell");
             int limit = 4;
             Random random = new Random();
-            int numberOfCreatures;
-            numberOfCreatures = random.nextInt(limit)+1;
-            System.out.println("# Creaturas x celda: " +numberOfCreatures);
-            return numberOfCreatures;
+            //int numberOfCreatures;
+            for (int i = 0; i < enviromentContainer.length; i++) {
+                for (int j = 0; j < enviromentContainer.length; j++) {
+                    enviromentContainer[i][j].add(random.nextInt(limit) + 1);
+                }
+            }
+            // numberOfCreatures = random.nextInt(limit)+1;
+            for (int i = 0; i < enviromentContainer.length; i++) {
+                    for (int j = 0; j < enviromentContainer.length; j++) {
+                        System.out.printf("Cell [%d][%d]: ", i, j);
+                        for (Object numberOfCreatures : enviromentContainer[i][j]) {
+                        System.out.print(numberOfCreatures + "\t");
+                    }
+                }
+                System.out.println();
+            }
+            return enviromentContainer;
         }
 
         public String[] determineCreatureByCode(int numberOfCreatures) {
@@ -57,7 +71,7 @@ public class Enviroment {
             Random random = new Random();
             int creatureCode;
             String[] creatureNames = new String[numberOfCreatures];
-            System.out.println("Nombres y codigos:");
+            System.out.println("Names and codes:");
             for (int i = 0; i < numberOfCreatures; i++) {
                 creatureCode = random.nextInt(limit);
                 for (AvailableLivingCreatureCodes creature : AvailableLivingCreatureCodes.values()){
@@ -174,3 +188,4 @@ public class Enviroment {
     }
 
 }
+
