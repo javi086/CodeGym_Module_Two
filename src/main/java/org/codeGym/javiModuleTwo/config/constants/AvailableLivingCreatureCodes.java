@@ -30,7 +30,7 @@ public enum AvailableLivingCreatureCodes {
         return livingCreatureCode;
     }
 
-    public static String getCreatureByName(int code){
+    public static String getCreatureByType(int code){
         for (AvailableLivingCreatureCodes creature : AvailableLivingCreatureCodes.values()){
             if(creature.getLivingCreatureCode() == code){
                 return creature.name();
