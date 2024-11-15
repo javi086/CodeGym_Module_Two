@@ -1,7 +1,7 @@
 package org.codeGym.javiModuleTwo.models.enviroment;
 
 
-import org.codeGym.javiModuleTwo.config.constants.AvailableLivingCreatureCodes;
+import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.config.constants.AvailableMovements;
 import org.codeGym.javiModuleTwo.models.Animal;
 import org.codeGym.javiModuleTwo.models.Plant.Plant;
@@ -59,88 +59,88 @@ public class Enviroment {
             for (int j = 0; j < columns; j++) {
                 for (Integer number : numberOfAnimalsByCell[i][j]) {
                     for (int k = 0; k < number; k++) {
-                        animalCode = random.nextInt(AvailableLivingCreatureCodes.values().length);
+                        animalCode = random.nextInt(AvailableAnimals.values().length);
                         //System.out.println(animalCode);
-                        String animalType = AvailableLivingCreatureCodes.getCreatureByType(animalCode);
+                        String animalName = AvailableAnimals.getAnimalNameByCode(animalCode);
                         //System.out.println(animalType);
-                        switch (animalType) {
+                        switch (animalName) {
                             case "BEAR":
-                                Bear bear = new Bear();
+                                Animal bear = new Bear();
                                 bear.setAlive(true);
                                 animalContainer[i][j].add(bear);
                                 break;
                             case "BOA":
-                                Boa boa = new Boa();
+                                Animal boa = new Boa();
                                 boa.setAlive(true);
                                 animalContainer[i][j].add(boa);
                                 break;
                             case "EAGLE":
-                                Eagle eagle = new Eagle();
+                                Animal eagle = new Eagle();
                                 eagle.setAlive(true);
                                 animalContainer[i][j].add(eagle);
                                 break;
                             case "FOX":
-                                Fox fox = new Fox();
+                                Animal fox = new Fox();
                                 fox.setAlive(true);
                                 animalContainer[i][j].add(fox);
                                 break;
                             case "WOLF":
-                                Wolf wolf = new Wolf();
+                                Animal wolf = new Wolf();
                                 wolf.setAlive(true);
                                 animalContainer[i][j].add(wolf);
                                 break;
                             case "BOAR":
-                                Boar boar = new Boar();
+                                Animal boar = new Boar();
                                 boar.setAlive(true);
                                 animalContainer[i][j].add(boar);
                                 break;
                             case "BUFFALO":
-                                Buffalo buffalo = new Buffalo();
+                                Animal buffalo = new Buffalo();
                                 buffalo.setAlive(true);
                                 animalContainer[i][j].add(buffalo);
                                 break;
                             case "CATERPILLAR":
-                                Caterpillar caterpillar = new Caterpillar();
+                                Animal caterpillar = new Caterpillar();
                                 caterpillar.setAlive(true);
                                 animalContainer[i][j].add(caterpillar);
                                 break;
                             case "DEER":
-                                Deer deer = new Deer();
+                                Animal deer = new Deer();
                                 deer.setAlive(true);
                                 animalContainer[i][j].add(deer);
                                 break;
                             case "DUCK":
-                                Duck duck = new Duck();
+                                Animal duck = new Duck();
                                 duck.setAlive(true);
                                 animalContainer[i][j].add(duck);
                                 break;
                             case "GOAT":
-                                Goat goat = new Goat();
+                                Animal goat = new Goat();
                                 goat.setAlive(true);
                                 animalContainer[i][j].add(goat);
                                 break;
                             case "HORSE":
-                                Horse horse = new Horse();
+                                Animal horse = new Horse();
                                 horse.setAlive(true);
                                 animalContainer[i][j].add(horse);
                                 break;
                             case "MOUSE":
-                                Mouse mouse = new Mouse();
+                                Animal mouse = new Mouse();
                                 mouse.setAlive(true);
                                 animalContainer[i][j].add(mouse);
                                 break;
                             case "RABBIT":
-                                Rabbit rabbit = new Rabbit();
+                                Animal rabbit = new Rabbit();
                                 rabbit.setAlive(true);
                                 animalContainer[i][j].add(rabbit);
                                 break;
                             case "SHEEP":
-                                Sheep sheep = new Sheep();
+                                Animal sheep = new Sheep();
                                 sheep.setAlive(true);
                                 animalContainer[i][j].add(sheep);
                                 break;
                             case "PLANT":
-                                Plant plant = new Plant();
+                                Animal plant = new Plant();
                                 plant.setAlive(true);
                                 animalContainer[i][j].add(plant);
                                 break;
@@ -156,28 +156,19 @@ public class Enviroment {
 
     public void displayInitialEnvironment() {
         System.out.println("4.Hola displayInitialEnvironment");
-        String tempoPicture="*";
-        boolean checker = true;
         for (int i = 0; i < rows; i++) {
             System.out.println("Row: " + i);
             for (int j = 0; j < columns; j++) {
-                System.out.printf("Cell-[%d][%d]: ", i, j);
+                System.out.printf("Cell-[%d][%d]", i, j);
                 for (Animal animal : animalContainer[i][j]) {
-                        if (checker && animal instanceof Boa) {
-                            tempoPicture = AvailableLivingCreatureCodes.BOA.getAvatar();
-                            checker = false;
-                        }
-
-
                     Class<?>[] interfaces = animal.getClass().getInterfaces();
                     for (Class<?> interf : interfaces) {
-                        System.out.print(tempoPicture + animal.getClass().getSimpleName() + " (Alive:" + animal.isAlive() + ", type:" + interf.getSimpleName() + ") | ");
+                        //System.out.printf("%s %s %s %s", tempoPicture=!tempoPicture.equals("N") ? tempoPicture : "*", animal.getClass().getSimpleName(),animal.isAlive() , interf.getSimpleName() );
+                        System.out.printf(" | %s-%s (Alive: %s type: %s)", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()),animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
                     }
                 }
-
                 System.out.println();
             }
-
             System.out.println();
         }
     }
@@ -260,11 +251,11 @@ public class Enviroment {
         for (int i = 0; i < rows; i++) {
             System.out.println("Row: " + i);
             for (int j = 0; j < columns; j++) {
-                System.out.printf("Cell-[%d][%d]: ", i, j);
+                System.out.printf("Cell-[%d][%d]", i, j);
                 for (Animal animal : animalContainer[i][j]) {
                     Class<?>[] interfaces = animal.getClass().getInterfaces();
                     for (Class<?> interf : interfaces) {
-                        System.out.print(animal.getClass().getSimpleName() + "-(Alive:" + animal.isAlive() + ", type:" + interf.getSimpleName() + ") | ");
+                        System.out.printf(" | %s-%s (Alive: %s type: %s)", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()),animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
                     }
                 }
                 System.out.println();
