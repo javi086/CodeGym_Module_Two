@@ -5,6 +5,7 @@ import org.codeGym.javiModuleTwo.models.Animal;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
 public class Bear extends Animal implements Carnivore {
+
     @Override
     public void eat() {
 
