@@ -1,15 +1,19 @@
 package org.codeGym.javiModuleTwo.models;
 
+import java.util.List;
+
 public abstract class Animal {
 
     public float weight;
     public boolean isAlive;
     public char gender;
 
-    public abstract void eat();
+
+    public abstract  void eat(List<Animal> animalList);
     public abstract void move();
     public abstract void breed();
     public abstract void die();
+
 
 
     public float getWeight() {

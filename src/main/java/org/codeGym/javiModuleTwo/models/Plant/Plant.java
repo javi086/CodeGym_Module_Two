@@ -4,9 +4,13 @@ package org.codeGym.javiModuleTwo.models.Plant;
 import org.codeGym.javiModuleTwo.models.Animal;
 import org.codeGym.javiModuleTwo.services.Photosynthetic;
 
+import java.util.List;
+
 public class Plant  extends Animal implements Photosynthetic {
+
+
     @Override
-    public void eat() {
+    public void eat(List<Animal> animalList) {
 
     }
 

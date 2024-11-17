@@ -9,9 +9,13 @@ public class Main {
         enviroment.determineNumberOfAnimalsByCell();
         enviroment.determineAnimalsByCode();
         enviroment.displayInitialEnvironment();
+        //Animal class
         enviroment.determinePossibleMovements();
         enviroment.moveAnimal();
         enviroment.displayNewPosition();
+        enviroment.identifyCarnivoreHerbivore();
+        enviroment.callInstance();
+
 
     }
 }

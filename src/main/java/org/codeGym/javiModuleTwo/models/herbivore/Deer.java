@@ -3,9 +3,11 @@ package org.codeGym.javiModuleTwo.models.herbivore;
 import org.codeGym.javiModuleTwo.models.Animal;
 import org.codeGym.javiModuleTwo.services.Herbivore;
 
+import java.util.List;
+
 public class Deer extends Animal implements Herbivore {
     @Override
-    public void eat() {
+    public void eat(List<Animal> animalList) {
 
     }
 

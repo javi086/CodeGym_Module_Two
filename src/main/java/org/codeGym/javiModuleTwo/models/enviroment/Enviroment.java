@@ -7,6 +7,8 @@ import org.codeGym.javiModuleTwo.models.Animal;
 import org.codeGym.javiModuleTwo.models.Plant.Plant;
 import org.codeGym.javiModuleTwo.models.carnivore.*;
 import org.codeGym.javiModuleTwo.models.herbivore.*;
+import org.codeGym.javiModuleTwo.services.Carnivore;
+import org.codeGym.javiModuleTwo.services.Herbivore;
 
 import java.util.*;
 
@@ -16,6 +18,10 @@ public class Enviroment {
     private final List<Animal>[][] animalContainer = new ArrayList[rows][columns];
     private final List<Integer>[][] numberOfAnimalsByCell = new ArrayList[rows][columns];
     private final List<Integer>[][] availableMovementsInEachCell = new ArrayList[rows][columns];
+    private List<Animal> livingCarnivores = new ArrayList<>();
+    private List<Animal> livingHerbivores = new ArrayList<>();
+    private List<Animal> deadAnimals = new ArrayList<>();
+
 
 
     public void setEnviromentConditions() {
@@ -164,7 +170,7 @@ public class Enviroment {
                     Class<?>[] interfaces = animal.getClass().getInterfaces();
                     for (Class<?> interf : interfaces) {
                         //System.out.printf("%s %s %s %s", tempoPicture=!tempoPicture.equals("N") ? tempoPicture : "*", animal.getClass().getSimpleName(),animal.isAlive() , interf.getSimpleName() );
-                        System.out.printf(" | %s-%s (Alive: %s type: %s)", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()),animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
+                        System.out.printf(" | %s-%s (Alive: %s type: %s)", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()), animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
                     }
                 }
                 System.out.println();
@@ -245,7 +251,6 @@ public class Enviroment {
         }
     }
 
-
     public void displayNewPosition() {
         System.out.println("7. Hello displayNewPositions");
         for (int i = 0; i < rows; i++) {
@@ -255,7 +260,7 @@ public class Enviroment {
                 for (Animal animal : animalContainer[i][j]) {
                     Class<?>[] interfaces = animal.getClass().getInterfaces();
                     for (Class<?> interf : interfaces) {
-                        System.out.printf(" | %s-%s (Alive: %s type: %s)", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()),animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
+                        System.out.printf(" | %s-%s (Alive: %s type: %s)", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()), animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
                     }
                 }
                 System.out.println();
@@ -263,6 +268,35 @@ public class Enviroment {
             System.out.println();
         }
     }
+
+    public void identifyCarnivoreHerbivore() {
+        System.out.println("8. Hello identifyCarnivoreHerbivore");
+
+        for (int i = 0; i < rows; i++) {
+           // System.out.println("Row: " + i);
+            for (int j = 0; j < columns; j++) {
+                //System.out.printf("Cell-[%d][%d]", i, j);
+                for (Animal animal : animalContainer[i][j]) {
+                   if (animal.isAlive && animal instanceof Carnivore){
+                       livingCarnivores.add(animal);
+                   }else if(animal.isAlive && animal instanceof Herbivore) {
+                       livingHerbivores.add(animal);
+                   }else {
+                       deadAnimals.add(animal);
+                   }
+                }
+            }
+        }
+}
+
+public void callInstance(){
+    System.out.println("9. Cazar");
+        for (Animal animal : livingCarnivores){
+            if (animal instanceof Carnivore){
+                animal.eat(livingHerbivores);
+            }
+        }
+}
 
 
 }
