@@ -1,6 +1,7 @@
 package org.codeGym.javiModuleTwo.models.carnivore;
 
 import org.codeGym.javiModuleTwo.models.Animal;
+import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
 import java.util.List;
@@ -24,28 +25,26 @@ public class Wolf extends Animal implements Carnivore {
         }
 
     }
-
-
     @Override
-    public void move() {
-
+    public boolean hunt(List<Animal> preyList) {
+        Random random = new Random();
+        int preyIndex = random.nextInt(preyList.size());
+        preyList.get(preyIndex).setAlive(false);
+        return true;
     }
+
+
+
 
     @Override
     public void breed() {
-
+        System.out.println("El lobo se esta reproduciendo");
     }
 
     @Override
     public void die() {
-
+        System.out.println("El lobo se murio");
     }
 
-    @Override
-    public boolean hunt(List<Animal> preyList) {
-        Random random = new Random();
-            int preyIndex = random.nextInt(preyList.size());
-            preyList.get(preyIndex).setAlive(false);
-            return true;
-    }
+
 }

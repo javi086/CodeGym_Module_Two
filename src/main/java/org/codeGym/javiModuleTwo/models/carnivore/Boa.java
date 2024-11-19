@@ -2,6 +2,7 @@ package org.codeGym.javiModuleTwo.models.carnivore;
 
 
 import org.codeGym.javiModuleTwo.models.Animal;
+import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
 import java.util.List;
@@ -15,10 +16,7 @@ public class Boa extends Animal implements Carnivore {
         System.out.println("La boa va a comer");
     }
 
-    @Override
-    public void move() {
 
-    }
 
     @Override
     public void breed() {

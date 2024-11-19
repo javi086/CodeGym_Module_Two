@@ -2,6 +2,7 @@ package org.codeGym.javiModuleTwo.models.Plant;
 
 
 import org.codeGym.javiModuleTwo.models.Animal;
+import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Photosynthetic;
 
 import java.util.List;
@@ -11,13 +12,12 @@ public class Plant  extends Animal implements Photosynthetic {
 
     @Override
     public void eat(List<Animal> animalList) {
-
     }
 
-    @Override
-    public void move() {
-
+    public void eat(){
+        System.out.println("La planta se esta alimentando de la tierra");
     }
+
 
     @Override
     public void breed() {
