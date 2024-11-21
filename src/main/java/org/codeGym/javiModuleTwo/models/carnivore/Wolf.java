@@ -18,10 +18,12 @@ public class Wolf extends Animal implements Carnivore {
         System.out.println("El lobo se prepara para cazar");
         wasTheHuntSuccessful = hunt(preyList);
         if (wasTheHuntSuccessful){
-            System.out.println("El lobo esta comiendo");
+            //System.out.println("El lobo esta comiendo");
+            animalMemory.put("Eat", "El lobo esta comiendo");
         }
         else{
             System.out.println("El lobo sigue con hambre");
+            animalMemory.put("Eat", "El lobo sigue con hambre");
         }
 
     }
@@ -34,8 +36,6 @@ public class Wolf extends Animal implements Carnivore {
     }
 
 
-
-
     @Override
     public void breed() {
         System.out.println("El lobo se esta reproduciendo");
@@ -45,6 +45,7 @@ public class Wolf extends Animal implements Carnivore {
     public void die() {
         System.out.println("El lobo se murio");
     }
+
 
 
 }
