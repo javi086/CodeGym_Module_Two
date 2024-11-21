@@ -12,8 +12,7 @@ import org.codeGym.javiModuleTwo.services.Herbivore;
 import org.codeGym.javiModuleTwo.services.Photosynthetic;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class Enviroment {
     private int enviromentRows = 5;
@@ -28,7 +27,7 @@ public class Enviroment {
     private List<Animal> deadAnimals = new ArrayList<>();
 
 
-    public Enviroment(){
+    public Enviroment() {
         prepareEnviromentArrays();
         determineNumberOfAnimalsByCell();
         determineAnimalsByCode();
@@ -53,7 +52,7 @@ public class Enviroment {
         this.enviromentColumns = enviromentColumns;
     }
 
-    public List<Integer>[][] getAvailableMovementsInEachCell(){
+    public List<Integer>[][] getAvailableMovementsInEachCell() {
         return this.availableMovementsInEachCell;
     }
 
@@ -194,6 +193,7 @@ public class Enviroment {
             }
         }
     }
+
     public void determinePossibleMovements() {
         System.out.println("4. Identify possible movements by cell.");
 
@@ -224,51 +224,96 @@ public class Enviroment {
                 for (Animal animal : animalContainer[i][j]) {
                     Class<?>[] interfaces = animal.getClass().getInterfaces();
                     for (Class<?> interf : interfaces) {
-                        //System.out.printf("%s %s %s %s", tempoPicture=!tempoPicture.equals("N") ? tempoPicture : "*", animal.getClass().getSimpleName(),animal.isAlive() , interf.getSimpleName() );
-                        System.out.printf(" | %s-%s (Alive: %s type: %s)", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()), animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
+                        System.out.printf(" | %s-%s (Alive: %s type: %s) ", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()), animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
                     }
                 }
-                System.out.println();
+               for ( Animal animal : animalContainer[i][j]){
+                   if (!animal.animalMemory.isEmpty()){
+                       displayAnimalHistory();
+                   }
+               }
             }
             System.out.println();
         }
     }
 
-    public void startAnimalTasks(Enviroment enviromentInformation){
-        ExecutorService enviromentThreadPool = Executors.newFixedThreadPool(enviromentRows * enviromentColumns);
+    public void startAnimalTasks(Enviroment enviromentInformation) {
+        System.out.println("Start animal tasks");
+        ExecutorService enviromentThreadPool =  Executors.newFixedThreadPool(enviromentRows * enviromentColumns);
+        Random random = new Random();
+
+        for (int i = 0; i < enviromentRows; i++) {
+            //System.out.println("Row: " + i);
+            for (int j = 0; j < enviromentColumns; j++) {
+                //System.out.printf("[%d][%d] \n", i, j);
+                List<Animal> animalList = new ArrayList<>(animalContainer[i][j]);
+                List<Integer> movementsList = getAvailableMovementsInEachCell()[i][j];
+
+
+                for (Animal animal : animalList) {
+                    final int row = i;
+                    final int col = j;
+                    final int radomMovement = movementsList.get(random.nextInt(movementsList.size()));
+
+                    enviromentThreadPool.submit(() -> {
+                        synchronized (enviromentInformation.getAnimalContainer()) {
+                            animal.move(row, col, radomMovement, enviromentInformation);
+                        }
+                        //animal.move(enviromentInformation);
+                    });
+                }
+            }
+        }
+        enviromentThreadPool.shutdownNow();
+        try {
+            if (!enviromentThreadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                System.err.println("Some tasks did not complete within the timeout.");
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Thread pool interrupted: " + e.getMessage());
+        }
+
+        displayAnimalLocation();
+        //displayAnimalHistory();
+        /*try {
+            if (!enviromentThreadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS)) {
+                System.out.println("Some tasks did not complete within the timeout.");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    public void displayAnimalHistory() {
+        System.out.println("Animal history");
 
         for (int i = 0; i < enviromentRows; i++) {
             System.out.println("Row: " + i);
             for (int j = 0; j < enviromentColumns; j++) {
-                System.out.printf("[%d][%d]", i,j);
-               // System.out.printf("Cell-[%d][%d] Ejecutando acciones en ambiente \n", i, j);
-                final int row = i;
-                final int col = j;
-                enviromentThreadPool.submit(() -> {
-                    System.out.printf("Task for cell [%d][%d] started.\n", row, col);
-                    for (Animal animal : animalContainer[row][col]){
-                        animal.move(enviromentInformation);
-                        animal.breed();
-                        animal.die();
-                    }
-                    //System.out.printf("Task for cell [%d][%d] completed.\n", row, col);
-                    //enviroment.identifyCarnivoreHerbivore();
-                    //enviroment.eatTime();
-                });
-            }
-        }
-
-        enviromentThreadPool.shutdown();
-        for (int i = 0; i <enviromentRows ; i++) {
-            for (int j = 0; j <enviromentColumns ; j++) {
-                for (Animal animal : animalContainer[i][j]){
-                    animal.animalMemory.forEach(System.out::println);
+                System.out.printf("[%d][%d] \n", i, j);
+                for (Animal animal : animalContainer[i][j]) {
+                        System.out.printf("%s %s Alive: %s", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()), animal.getAnimalMemory(), animal.isAlive());
                 }
             }
         }
-        displayAnimalLocation();
-    }
 
+       /* for (int i = 0; i < enviromentRows; i++) {
+            System.out.println("Row: " + i);
+            for (int j = 0; j < enviromentColumns; j++) {
+                System.out.printf("Cell-[%d][%d]", i, j);
+                for (Animal animal : animalContainer[i][j]) {
+                    Class<?>[] interfaces = animal.getClass().getInterfaces();
+                    for (Class<?> interf : interfaces) {
+                        //System.out.printf("%s %s %s %s", tempoPicture=!tempoPicture.equals("N") ? tempoPicture : "*", animal.getClass().getSimpleName(),animal.isAlive() , interf.getSimpleName() );
+                        System.out.printf(" | %s-%s (Alive: %s type: %s)", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()), animal.getClass().getSimpleName(), animal.isAlive(), interf.getSimpleName());
+                        System.out.printf("\n%s", animal.getAnimalMemory());
+                    }
+                }
+                System.out.println();
+            }
+            System.out.println();
+        }*/
+    }
 
     public void moveAnimal() {
         System.out.println("6. Moviendo animal");
@@ -325,35 +370,34 @@ public class Enviroment {
         System.out.println("8. Hello identifyCarnivoreHerbivore");
 
         for (int i = 0; i < enviromentRows; i++) {
-           // System.out.println("Row: " + i);
+            // System.out.println("Row: " + i);
             for (int j = 0; j < enviromentColumns; j++) {
                 //System.out.printf("Cell-[%d][%d]", i, j);
                 for (Animal animal : animalContainer[i][j]) {
-                   if (animal.isAlive && animal instanceof Carnivore){
-                       livingCarnivores.add(animal);
-                   }else if(animal.isAlive && animal instanceof Herbivore) {
-                       livingHerbivores.add(animal);
-                   } else if (animal.isAlive && animal instanceof Photosynthetic) {
-                       livingPlants.add(animal);
-                   } else {
-                       deadAnimals.add(animal);
-                   }
+                    if (animal.isAlive && animal instanceof Carnivore) {
+                        livingCarnivores.add(animal);
+                    } else if (animal.isAlive && animal instanceof Herbivore) {
+                        livingHerbivores.add(animal);
+                    } else if (animal.isAlive && animal instanceof Photosynthetic) {
+                        livingPlants.add(animal);
+                    } else {
+                        deadAnimals.add(animal);
+                    }
                 }
             }
         }
-}
+    }
 
-public void eatTime(){
-    System.out.println("9. Hello eatTime");
-        for (Animal animal : livingCarnivores){
-            if (animal instanceof Carnivore){
+    public void eatTime() {
+        System.out.println("9. Hello eatTime");
+        for (Animal animal : livingCarnivores) {
+            if (animal instanceof Carnivore) {
                 animal.eat(livingHerbivores);
-            } else if (animal instanceof  Herbivore) {
+            } else if (animal instanceof Herbivore) {
                 animal.eat(livingPlants);
             }
         }
-}
-
+    }
 
 }
 
