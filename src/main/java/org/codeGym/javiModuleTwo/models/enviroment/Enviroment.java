@@ -254,6 +254,7 @@ public class Enviroment {
                             animal.move(row, col, radomMovement, enviromentInformation);
                         }
                     });
+
                 }
             }
         }
@@ -283,11 +284,7 @@ public class Enviroment {
 
                     eatThreadPool.submit(() -> {
                         synchronized (enviromentInformation.getAnimalContainer()) {
-                            if (animal instanceof Carnivore) {
-                                animal.eat(livingHerbivores);
-                            } else {
-                                animal.eat(livingPlants);
-                            }
+                            animal.eat(animalList);
                         }
                     });
                 }

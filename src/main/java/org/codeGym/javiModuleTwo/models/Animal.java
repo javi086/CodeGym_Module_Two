@@ -1,7 +1,9 @@
 package org.codeGym.javiModuleTwo.models;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
+import org.codeGym.javiModuleTwo.models.carnivore.Wolf;
 import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
+import org.codeGym.javiModuleTwo.services.Carnivore;
 
 import java.util.*;
 
@@ -10,10 +12,18 @@ public abstract class Animal {
     public float weight;
     public boolean isAlive;
     public char gender;
+    public int possibilityOfBeingEaten;
     public Map<String, String> animalMemory = new HashMap<>();
     //public Enviroment enviroment = new Enviroment();
 
 
+    public void setPossibilityOfBeingEaten(int possibility){
+        this.possibilityOfBeingEaten = possibility;
+    }
+
+    public int getPossibilityOfBeingEaten(){
+        return this.possibilityOfBeingEaten;
+    }
     public void setAnimalMemory(String key, String value) {
         animalMemory.put(key, value);
     }
@@ -60,9 +70,46 @@ public abstract class Animal {
         }
 
     }
-    public  void eat(List<Animal> preyList){
+    public  void eat( List<Animal> animalList){
+        Random random = new Random();
+        Set<Integer> indexOfAnimalsAlreadySelected = new HashSet<>();
+        //List<Animal> animalList = enviromentInformation.getAnimalContainer()[row][col];
 
-    };
+                while (indexOfAnimalsAlreadySelected.size() < animalList.size()){
+                    int randomIndexAnimalSelect = random.nextInt(animalList.size());
+                    System.out.println("Indice random:"+randomIndexAnimalSelect);
+                    if (indexOfAnimalsAlreadySelected.add(randomIndexAnimalSelect)) { // add() returns false if the index already exists
+
+                        System.out.println(animalList.get(randomIndexAnimalSelect));
+
+                        if(animalList.get(randomIndexAnimalSelect) instanceof Wolf && animalList.get(randomIndexAnimalSelect).isAlive){
+                            //Wolf wolf = (Wolf) animalList.get(randomIndexAnimalSelect);
+                           // wolf.hunt(animalList);
+                            System.out.println("Hola lobo");
+                            animalList.remove(1);
+                        }else{
+                            System.out.println("no es");
+                        }
+
+                    }
+                }
+
+
+
+
+        System.out.println("Hora de comer");
+        //Determining who is going to eat first carnivore or herbivore
+
+/*
+        for (Animal animal : animalListInCell){
+            if(animal instanceof Wolf){
+
+                Wolf wolf = (Wolf) animal;
+
+            }
+        }
+*/
+    }
 
 
     public void breed() {
