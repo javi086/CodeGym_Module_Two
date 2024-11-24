@@ -11,6 +11,7 @@ import org.codeGym.javiModuleTwo.services.Carnivore;
 import org.codeGym.javiModuleTwo.services.Herbivore;
 import org.codeGym.javiModuleTwo.services.Photosynthetic;
 
+import java.sql.Array;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -20,6 +21,8 @@ public class Enviroment {
     private final List<Animal>[][] animalContainer = new ArrayList[enviromentRows][enviromentColumns];
     private final List<Integer>[][] numberOfAnimalsByCell = new ArrayList[enviromentRows][enviromentColumns];
     private final List<Integer>[][] availableMovementsInEachCell = new ArrayList[enviromentRows][enviromentColumns];
+    private final Integer[][] possibilityOFBeEatenContaniner = new Integer[AvailableAnimals.values().length][AvailableAnimals.values().length];
+    public Map<String, Integer> possibi = new HashMap<>();
     private List<Animal> livingCarnivores = new ArrayList<>();
     private List<Animal> livingHerbivores = new ArrayList<>();
     private List<Animal> livingAnimals = new ArrayList<>();
@@ -340,16 +343,9 @@ public class Enviroment {
         }
     }
 
-    /*public void eatTime() {
-        System.out.println("9. Hello eatTime");
-        for (Animal animal : livingCarnivores) {
-            if (animal instanceof Carnivore) {
-                animal.eat(livingHerbivores);
-            } else if (animal instanceof Herbivore) {
-                animal.eat(livingPlants);
-            }
-        }
-    }*/
+
+
+
 
 }
 
