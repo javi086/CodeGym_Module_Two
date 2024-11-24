@@ -7,9 +7,12 @@ import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.models.herbivore.*;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
+import java.security.Key;
 import java.util.*;
 
 public abstract class Animal {
+
+
 
     public float weight;
     public boolean isAlive;
@@ -74,40 +77,47 @@ public abstract class Animal {
 
     }
 
-    public void eat(List<Animal> animalList) {
+    public void eat(List<Animal> animalList, Enviroment enviromentInformation) {
+        System.out.println("Animal ready to eat");
         Random random = new Random();
         Set<Integer> indexOfAnimalsAlreadySelected = new HashSet<>();
-        //List<Animal> animalList = enviromentInformation.getAnimalContainer()[row][col];
+        Map<Animal, Integer> possibilityOfBeEaten = new HashMap<>();
+
+        /*
+        * REVISA EL CASO DONDE LA LISTA ES DE UN SOLO INTEGRANTE
+        * REVISA QUE SI VIENEN POSIBILIDADDES DE CERO NO DE REGRESE UN MAX PUES NO HAY NADA QUE COMER
+        * REVISA ELSE PARA EL CASO DE LAS PLANTAS
+        * DEBUEALO
+        * */
 
         while (indexOfAnimalsAlreadySelected.size() < animalList.size()) {
             int randomIndexAnimalSelect = random.nextInt(animalList.size());
             System.out.println("Indice random:" + randomIndexAnimalSelect);
-            if (indexOfAnimalsAlreadySelected.add(randomIndexAnimalSelect)) { // add() returns false if the index already exists
-
+            if (indexOfAnimalsAlreadySelected.add(randomIndexAnimalSelect)) {
                 System.out.println(animalList.get(randomIndexAnimalSelect));
-
-                if (animalList.get(randomIndexAnimalSelect) instanceof Wolf && animalList.get(randomIndexAnimalSelect).isAlive) {
-                    Wolf wolf = (Wolf) animalList.get(randomIndexAnimalSelect);
-                    wolf.hunt(animalList);
-
+                //Verify possibility of be eaten for each animal
+                for (Animal animal : animalList) {
+                    if(!animal.equals(animalList.get(randomIndexAnimalSelect))) {
+                        verifyPossibilityOfBeEaten(animalList.get(randomIndexAnimalSelect), animal);
+                        System.out.println("Animal: " + animal.getClass().getSimpleName() +  "Possibility: " + animal.getPossibilityOfBeingEaten());
+                        possibilityOfBeEaten.put(animal, animal.getPossibilityOfBeingEaten());
+                    }
                 }
+                //Determine animal to be eaten based on max possibility obtained, except for plants
+                if(!(animalList.get(randomIndexAnimalSelect) instanceof Plant)) {
+                    Map.Entry<Animal, Integer> mostLikekyAnimalOfBeEaten = possibilityOfBeEaten.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+                    if (mostLikekyAnimalOfBeEaten != null) {
+                        enviromentInformation.setDeadAnimals(mostLikekyAnimalOfBeEaten.getKey());
+                        animalList.remove(mostLikekyAnimalOfBeEaten.getKey());
+                        animalList.get(randomIndexAnimalSelect).setAnimalMemory("Eat", mostLikekyAnimalOfBeEaten.getKey().getClass().getSimpleName());
+                        System.out.println("Animal with max value: " + mostLikekyAnimalOfBeEaten.getKey());
 
+                    }
+                }else {
+                    System.out.println("Soy una planta no como a nadie");
+                }
             }
         }
-
-
-        System.out.println("Hora de comer");
-        //Determining who is going to eat first carnivore or herbivore
-
-/*
-        for (Animal animal : animalListInCell){
-            if(animal instanceof Wolf){
-
-                Wolf wolf = (Wolf) animal;
-
-            }
-        }
-*/
     }
 
 
@@ -146,237 +156,31 @@ public abstract class Animal {
         this.gender = gender;
     }
 
-    public void verifyPossibilityOfBeEaten(Animal animalAsHunter, List<Animal> possiblePreys) {
-        switch (animalAsHunter.getClass().getSimpleName()) {
-            case "Wolf":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Boa || animal instanceof Fox || animal instanceof Bear || animal instanceof Eagle || animal instanceof Caterpillar || animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Horse || animal instanceof Buffalo) {
-                        animal.setPossibilityOfBeingEaten(10);
-                    } else if (animal instanceof Deer || animal instanceof Boar) {
-                        animal.setPossibilityOfBeingEaten(15);
-                    } else if (animal instanceof Duck) {
-                        animal.setPossibilityOfBeingEaten(40);
-                    } else if (animal instanceof Rabbit || animal instanceof Goat) {
-                        animal.setPossibilityOfBeingEaten(60);
-                    } else if (animal instanceof Sheep) {
-                        animal.setPossibilityOfBeingEaten(70);
-                    } else if (animal instanceof Mouse) {
-                        animal.setPossibilityOfBeingEaten(80);
-                    }
-                }
-                break;
 
-            case "Boa":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Bear || animal instanceof Eagle || animal instanceof Horse || animal instanceof Deer || animal instanceof Goat || animal instanceof Sheep || animal instanceof Boar || animal instanceof Buffalo || animal instanceof Caterpillar || animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Duck) {
-                        animal.setPossibilityOfBeingEaten(10);
-                    } else if (animal instanceof Fox) {
-                        animal.setPossibilityOfBeingEaten(15);
-                    } else if (animal instanceof Rabbit) {
-                        animal.setPossibilityOfBeingEaten(20);
-                    } else if (animal instanceof Mouse) {
-                        animal.setPossibilityOfBeingEaten(40);
-                    }
-                }
-                break;
-            case "Fox":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Bear || animal instanceof Eagle || animal instanceof Horse || animal instanceof Deer || animal instanceof Goat || animal instanceof Sheep || animal instanceof Boar || animal instanceof Buffalo || animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(40);
-                    } else if (animal instanceof Duck) {
-                        animal.setPossibilityOfBeingEaten(60);
-                    } else if (animal instanceof Rabbit) {
-                        animal.setPossibilityOfBeingEaten(70);
-                    } else if (animal instanceof Mouse) {
-                        animal.setPossibilityOfBeingEaten(90);
-                    }
-                }
-                break;
-            case "Bear":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Fox || animal instanceof Eagle || animal instanceof Caterpillar || animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Duck) {
-                        animal.setPossibilityOfBeingEaten(10);
-                    } else if (animal instanceof Buffalo) {
-                        animal.setPossibilityOfBeingEaten(20);
-                    } else if (animal instanceof Horse) {
-                        animal.setPossibilityOfBeingEaten(40);
-                    } else if (animal instanceof Boar) {
-                        animal.setPossibilityOfBeingEaten(50);
-                    } else if (animal instanceof Goat || animal instanceof Sheep) {
-                        animal.setPossibilityOfBeingEaten(70);
-                    } else if (animal instanceof Boa || animal instanceof Deer || animal instanceof Rabbit) {
-                        animal.setPossibilityOfBeingEaten(80);
-                    } else if (animal instanceof Mouse) {
-                        animal.setPossibilityOfBeingEaten(90);
-                    }
-                }
-                break;
-            case "Eagle":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa ||
-                            animal instanceof Bear || animal instanceof Horse || animal instanceof Deer ||
-                            animal instanceof Goat || animal instanceof Sheep || animal instanceof Boar ||
-                            animal instanceof Buffalo || animal instanceof Caterpillar || animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Fox) {
-                        animal.setPossibilityOfBeingEaten(10);
-                    } else if (animal instanceof Duck) {
-                        animal.setPossibilityOfBeingEaten(80);
-                    } else if (animal instanceof Rabbit || animal instanceof Mouse) {
-                        animal.setPossibilityOfBeingEaten(90);
-                    }
-                }
-                break;
-            case "Horse":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Deer ||
-                            animal instanceof Rabbit || animal instanceof Mouse || animal instanceof Goat ||
-                            animal instanceof Sheep || animal instanceof Boar || animal instanceof Buffalo ||
-                            animal instanceof Duck || animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Deer":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Horse ||
-                            animal instanceof Rabbit || animal instanceof Mouse || animal instanceof Goat ||
-                            animal instanceof Sheep || animal instanceof Boar || animal instanceof Buffalo ||
-                            animal instanceof Duck || animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Rabbit":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Horse ||
-                            animal instanceof Deer || animal instanceof Goat || animal instanceof Sheep ||
-                            animal instanceof Boar || animal instanceof Buffalo || animal instanceof Duck ||
-                            animal instanceof Caterpillar || animal instanceof Mouse) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Mouse":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Horse ||
-                            animal instanceof Deer || animal instanceof Rabbit || animal instanceof Goat ||
-                            animal instanceof Sheep || animal instanceof Boar || animal instanceof Buffalo || animal instanceof Duck) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(90);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Goat":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Deer ||
-                            animal instanceof Rabbit || animal instanceof Mouse || animal instanceof Horse ||
-                            animal instanceof Sheep || animal instanceof Boar || animal instanceof Buffalo ||
-                            animal instanceof Duck || animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Sheep":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Deer ||
-                            animal instanceof Rabbit || animal instanceof Mouse || animal instanceof Goat ||
-                            animal instanceof Horse || animal instanceof Boar || animal instanceof Buffalo ||
-                            animal instanceof Duck || animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Boar":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Deer ||
-                            animal instanceof Rabbit || animal instanceof Goat || animal instanceof Duck ||
-                            animal instanceof Horse || animal instanceof Sheep || animal instanceof Buffalo) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    }else if (animal instanceof Mouse) {
-                            animal.setPossibilityOfBeingEaten(50);
-                    } else if (animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(90);
-                    }else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Buffalo":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Deer ||
-                            animal instanceof Rabbit || animal instanceof Mouse || animal instanceof Goat ||
-                            animal instanceof Horse || animal instanceof Boar || animal instanceof Sheep ||
-                            animal instanceof Duck || animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Duck":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Deer ||
-                            animal instanceof Rabbit || animal instanceof Mouse || animal instanceof Goat ||
-                            animal instanceof Horse || animal instanceof Boar || animal instanceof Buffalo){
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Caterpillar) {
-                        animal.setPossibilityOfBeingEaten(90);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
-            case "Caterpillar":
-                for (Animal animal : possiblePreys) {
-                    if (animal instanceof Wolf || animal instanceof Boa || animal instanceof Fox ||
-                            animal instanceof Bear || animal instanceof Eagle || animal instanceof Deer ||
-                            animal instanceof Rabbit || animal instanceof Mouse || animal instanceof Goat ||
-                            animal instanceof Horse || animal instanceof Boar || animal instanceof Sheep ||
-                            animal instanceof Duck) {
-                        animal.setPossibilityOfBeingEaten(0);
-                    } else if (animal instanceof Plant) {
-                        animal.setPossibilityOfBeingEaten(100);
-                    }
-                }
-                break;
+public void verifyPossibilityOfBeEaten(Animal animalAsHunter, Animal animalAsPrey){
+    // The matrix directly represents the provided table
+    int[][] possibilityMatrix = {
+                        // Wolf Boa Fox Bear Eagle Horse Deer Rabbit Mouse Goat Sheep Boar Buffalo Duck Caterpillar Plants
+            /*Wolf*/        {0,  0,  0,  0,  0, 10, 15, 60, 80, 60, 70, 15, 10, 40,  0, 0}, // Wolf
+            /*Boa*/         {0,  0, 15,  0,  0,  0,  0, 20, 40,  0,  0,  0,  0, 10,  0, 0}, // Boa
+            /*Fox*/         {0,  0,  0,  0,  0,  0,  0, 70, 90,  0,  0,  0,  0, 60, 40, 0}, // Fox
+            /*Bear*/        {0, 80,  0,  0,  0, 40, 80, 80, 90, 70, 70, 50, 20, 10,  0, 0}, // Bear
+            /*Eagle*/       {0,  0, 10,  0,  0,  0,  0, 40, 10,  0,  0,  0,  0, 80,  0, 0}, // Eagle
+            /*Horse*/       {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Horse
+            /*Deer*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Deer
+            /*Rabbit*/      {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Rabbit
+            /*Mouse*/       {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Mouse
+            /*Goat*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Goat
+            /*Sheep*/       {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Sheep
+            /*Boar*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Boar
+            /*Buffalo*/     {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Buffalo
+            /*Duck*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Duck
+            /*Caterpillar*/ {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Caterpillar
+            /*Plan*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0},   //Plant
+    };
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + animalAsHunter.getClass().getSimpleName());
-        }
-
-
-    }
-
+    int possibility = possibilityMatrix[AvailableAnimals.getAnimalCodeByName(animalAsHunter.getClass().getSimpleName().toUpperCase())][AvailableAnimals.getAnimalCodeByName(animalAsPrey.getClass().getSimpleName().toUpperCase())];
+    animalAsPrey.setPossibilityOfBeingEaten(possibility);
+}
 
 }

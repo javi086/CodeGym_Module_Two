@@ -7,7 +7,8 @@ import org.codeGym.javiModuleTwo.services.Carnivore;
 import java.util.List;
 
 public class Eagle extends Animal implements  Carnivore{
-    @Override
+
+
     public void eat(List<Animal> animalList) {
         System.out.println("La aguila va a comer");
     }

@@ -12,33 +12,24 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        //Enviroment enviroment = new Enviroment();
-        //enviroment.moveAnimal(enviroment);
-        //enviroment.eatAnotherAnimal(enviroment);
-        //enviroment.displayAnimalHistory();
+        Enviroment enviroment = new Enviroment();
+        enviroment.moveAnimal(enviroment);
+        enviroment.eatAnotherAnimal(enviroment);
+        //enviroment.displayAnimalHistory()r;
         //enviroment.displayAnimalLocation();
 
         List<Animal> prueba = new ArrayList<>(3);
         prueba.add(new Wolf());
-        prueba.add(new Buffalo());
+        prueba.add(new Rabbit());
         prueba.add(new Plant());
-        prueba.get(0).setAlive(true);
-        prueba.get(1).setAlive(true);
-        prueba.get(2).setAlive(true);
         Animal animal = new Animal() {
             @Override
             public String getAnimalMemory() {
                 return super.getAnimalMemory();
             }
         };
-        //animal.eat(prueba);
-        Wolf wolf = new Wolf();
-        wolf.isAlive();
+        //animal.eat(prueba, enviroment);
 
-        for (Animal animal1 : prueba){
-            animal1.verifyPossibilityOfBeEaten(wolf, prueba);
-            System.out.println("El animal: " +animal1.getClass().getSimpleName()+ "Tiene una probabilidad de: "+animal1.getPossibilityOfBeingEaten());
-        }
 
     }
 

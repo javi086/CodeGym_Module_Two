@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Bear extends Animal implements Carnivore {
 
-    @Override
+
     public void eat(List<Animal> animalList) {
         System.out.println("El oso va a comer");
     }

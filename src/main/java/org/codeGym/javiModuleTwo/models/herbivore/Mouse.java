@@ -7,7 +7,7 @@ import org.codeGym.javiModuleTwo.services.Herbivore;
 import java.util.List;
 
 public class Mouse extends Animal implements Herbivore {
-    @Override
+
     public void eat(List<Animal> animalList) {
 
     }

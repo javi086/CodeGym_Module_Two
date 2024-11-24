@@ -10,7 +10,7 @@ import java.util.List;
 public class Boar extends Animal implements Herbivore {
 
 
-    @Override
+
     public void eat(List<Animal> animalList) {
 
     }

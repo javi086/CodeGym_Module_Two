@@ -11,10 +11,11 @@ public class Wolf extends Animal implements Carnivore {
 
 
     public Wolf() {
+        this.setAlive(true);
     }
-    @Override
+
     public void eat(List<Animal> preyList) {
-        boolean wasTheHuntSuccessful = false;
+        /*boolean wasTheHuntSuccessful = false;
         System.out.println("El lobo se prepara para cazar");
         wasTheHuntSuccessful = hunt(preyList);
         if (wasTheHuntSuccessful){
@@ -24,7 +25,7 @@ public class Wolf extends Animal implements Carnivore {
         else{
             System.out.println("El lobo sigue con hambre");
             animalMemory.put("Eat", "El lobo sigue con hambre");
-        }
+        }*/
 
     }
     @Override

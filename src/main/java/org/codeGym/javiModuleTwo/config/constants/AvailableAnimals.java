@@ -52,5 +52,13 @@ public enum AvailableAnimals {
         return "Unknown Code";
     }
 
-
+    public static int getAnimalCodeByName(String name){
+        int animalCode=0;
+        for (AvailableAnimals animal : AvailableAnimals.values()){
+            if(animal.name().equals(name)){
+               animalCode=animal.getAnimalCode();
+            }
+        }
+        return animalCode;
+    }
 }

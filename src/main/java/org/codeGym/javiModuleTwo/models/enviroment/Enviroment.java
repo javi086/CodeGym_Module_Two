@@ -56,6 +56,14 @@ public class Enviroment {
         this.enviromentColumns = enviromentColumns;
     }
 
+    public List<Animal> getDeadAnimals() {
+        return deadAnimals;
+    }
+
+    public void setDeadAnimals(Animal animal) {
+        this.deadAnimals.add(animal);
+    }
+
     public List<Integer>[][] getAvailableMovementsInEachCell() {
         return this.availableMovementsInEachCell;
     }
@@ -111,82 +119,82 @@ public class Enviroment {
                         switch (animalName) {
                             case "BEAR":
                                 Animal bear = new Bear();
-                                bear.setAlive(true);
+                                //bear.setAlive(true);
                                 animalContainer[i][j].add(bear);
                                 break;
                             case "BOA":
                                 Animal boa = new Boa();
-                                boa.setAlive(true);
+                                //boa.setAlive(true);
                                 animalContainer[i][j].add(boa);
                                 break;
                             case "EAGLE":
                                 Animal eagle = new Eagle();
-                                eagle.setAlive(true);
+                                //eagle.setAlive(true);
                                 animalContainer[i][j].add(eagle);
                                 break;
                             case "FOX":
                                 Animal fox = new Fox();
-                                fox.setAlive(true);
+                                //fox.setAlive(true);
                                 animalContainer[i][j].add(fox);
                                 break;
                             case "WOLF":
                                 Animal wolf = new Wolf();
-                                wolf.setAlive(true);
+                                //wolf.setAlive(true);
                                 animalContainer[i][j].add(wolf);
                                 break;
                             case "BOAR":
                                 Animal boar = new Boar();
-                                boar.setAlive(true);
+                                //boar.setAlive(true);
                                 animalContainer[i][j].add(boar);
                                 break;
                             case "BUFFALO":
                                 Animal buffalo = new Buffalo();
-                                buffalo.setAlive(true);
+                                //buffalo.setAlive(true);
                                 animalContainer[i][j].add(buffalo);
                                 break;
                             case "CATERPILLAR":
                                 Animal caterpillar = new Caterpillar();
-                                caterpillar.setAlive(true);
+                                //caterpillar.setAlive(true);
                                 animalContainer[i][j].add(caterpillar);
                                 break;
                             case "DEER":
                                 Animal deer = new Deer();
-                                deer.setAlive(true);
+                                //deer.setAlive(true);
                                 animalContainer[i][j].add(deer);
                                 break;
                             case "DUCK":
                                 Animal duck = new Duck();
-                                duck.setAlive(true);
+                                //duck.setAlive(true);
                                 animalContainer[i][j].add(duck);
                                 break;
                             case "GOAT":
                                 Animal goat = new Goat();
-                                goat.setAlive(true);
+                                //goat.setAlive(true);
                                 animalContainer[i][j].add(goat);
                                 break;
                             case "HORSE":
                                 Animal horse = new Horse();
-                                horse.setAlive(true);
+                                //horse.setAlive(true);
                                 animalContainer[i][j].add(horse);
                                 break;
                             case "MOUSE":
                                 Animal mouse = new Mouse();
-                                mouse.setAlive(true);
+                                //mouse.setAlive(true);
                                 animalContainer[i][j].add(mouse);
                                 break;
                             case "RABBIT":
                                 Animal rabbit = new Rabbit();
-                                rabbit.setAlive(true);
+                                //rabbit.setAlive(true);
                                 animalContainer[i][j].add(rabbit);
                                 break;
                             case "SHEEP":
                                 Animal sheep = new Sheep();
-                                sheep.setAlive(true);
+                               // sheep.setAlive(true);
                                 animalContainer[i][j].add(sheep);
                                 break;
                             case "PLANT":
                                 Animal plant = new Plant();
-                                plant.setAlive(true);
+                                //plant.setAlive(true);
                                 animalContainer[i][j].add(plant);
                                 break;
                             default:
@@ -287,7 +295,7 @@ public class Enviroment {
 
                     eatThreadPool.submit(() -> {
                         synchronized (enviromentInformation.getAnimalContainer()) {
-                            animal.eat(animalList);
+                            animal.eat(animalList, enviromentInformation);
                         }
                     });
                 }

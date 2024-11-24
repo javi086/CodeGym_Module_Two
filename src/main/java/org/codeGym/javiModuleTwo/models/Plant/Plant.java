@@ -10,7 +10,7 @@ import java.util.List;
 public class Plant  extends Animal implements Photosynthetic {
 
 
-    @Override
+
     public void eat(List<Animal> animalList) {
     }
 
