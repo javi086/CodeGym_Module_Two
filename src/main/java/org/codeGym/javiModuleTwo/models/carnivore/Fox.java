@@ -1,18 +1,18 @@
 package org.codeGym.javiModuleTwo.models.carnivore;
 
 import org.codeGym.javiModuleTwo.models.Animal;
+import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
-public class Fox extends Animal implements Carnivore {
-    @Override
-    public void eat() {
+import java.util.List;
 
+public class Fox extends Animal implements Carnivore{
+
+    public void eat(List<Animal> animalList) {
+        System.out.println("El zorro va a comer");
     }
 
-    @Override
-    public void move() {
 
-    }
 
     @Override
     public void breed() {
@@ -24,8 +24,9 @@ public class Fox extends Animal implements Carnivore {
 
     }
 
-    @Override
-    public void hunt() {
 
+    @Override
+    public boolean hunt(List<Animal> preyList) {
+        return false;
     }
 }

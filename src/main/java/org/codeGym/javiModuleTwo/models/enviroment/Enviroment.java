@@ -1,67 +1,102 @@
 package org.codeGym.javiModuleTwo.models.enviroment;
 
 
-import org.codeGym.javiModuleTwo.config.constants.AvailableLivingCreatureCodes;
+import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
+import org.codeGym.javiModuleTwo.config.constants.AvailableMovements;
 import org.codeGym.javiModuleTwo.models.Animal;
 import org.codeGym.javiModuleTwo.models.Plant.Plant;
 import org.codeGym.javiModuleTwo.models.carnivore.*;
 import org.codeGym.javiModuleTwo.models.herbivore.*;
+import org.codeGym.javiModuleTwo.services.Carnivore;
+import org.codeGym.javiModuleTwo.services.Herbivore;
+import org.codeGym.javiModuleTwo.services.Photosynthetic;
 
+import java.sql.Array;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class Enviroment {
-    private int enviromentWidth = 5;
-    private int enviromentHeight = 5;
-    private final List<Animal>[][] animalContainer = new ArrayList[enviromentWidth][enviromentHeight];
-    private final List<Integer>[][] numberOfAnimalsByCell = new ArrayList[enviromentWidth][enviromentHeight];
+    private int enviromentRows = 5;
+    private int enviromentColumns = 3;
+    private final List<Animal>[][] animalContainer = new ArrayList[enviromentRows][enviromentColumns];
+    private final List<Integer>[][] numberOfAnimalsByCell = new ArrayList[enviromentRows][enviromentColumns];
+    private final List<Integer>[][] availableMovementsInEachCell = new ArrayList[enviromentRows][enviromentColumns];
+    String[][] animalContainerRepresentation = new String[enviromentRows][enviromentColumns];
+    private final Integer[][] possibilityOFBeEatenContaniner = new Integer[AvailableAnimals.values().length][AvailableAnimals.values().length];
+    public Map<String, Integer> possibi = new HashMap<>();
+    private List<Animal> livingCarnivores = new ArrayList<>();
+    private List<Animal> livingHerbivores = new ArrayList<>();
+    private List<Animal> livingAnimals = new ArrayList<>();
+    private List<Animal> livingPlants = new ArrayList<>();
+    private List<Animal> deadAnimals = new ArrayList<>();
 
 
     public Enviroment() {
+        prepareEnviromentArrays();
+        determineNumberOfAnimalsByCell();
+        determineAnimalsByCode();
+        identifyTypeOfAnimal();
+        determinePossibleMovements();
+        displayAnimalLocation();
+
     }
 
-    ;
-
-    public int getenviromentWidth() {
-        return this.enviromentWidth;
+    public int getEnviromentRows() {
+        return enviromentRows;
     }
 
-    public void setenviromentWidth(int width1) {
-        this.enviromentWidth = width1;
+    public void setEnviromentRows(int enviromentRows) {
+        this.enviromentRows = enviromentRows;
     }
 
-    ;
-
-    public int getenviromentHeight() {
-        return enviromentHeight;
+    public int getEnviromentColumns() {
+        return enviromentColumns;
     }
 
-    public void setenviromentHeight(int enviromentHeight) {
-        this.enviromentHeight = enviromentHeight;
+    public void setEnviromentColumns(int enviromentColumns) {
+        this.enviromentColumns = enviromentColumns;
     }
 
-    public void setEnviroment() {
-        System.out.println("1. Hola setEnviroment");
-        System.out.println("Enviroment lenght: " + animalContainer.length);
-        for (int i = 0; i < enviromentWidth; i++) {
-            for (int j = 0; j < enviromentHeight; j++) {
+    public List<Animal> getDeadAnimals() {
+        return deadAnimals;
+    }
+
+    public void setDeadAnimals(Animal animal) {
+        this.deadAnimals.add(animal);
+    }
+
+    public List<Integer>[][] getAvailableMovementsInEachCell() {
+        return this.availableMovementsInEachCell;
+    }
+
+    public List<Animal>[][] getAnimalContainer() {
+        return animalContainer;
+    }
+
+
+    public void prepareEnviromentArrays() {
+        System.out.println("1. Get environment ready.");
+        for (int i = 0; i < enviromentRows; i++) {
+            for (int j = 0; j < enviromentColumns; j++) {
                 animalContainer[i][j] = new ArrayList<>();
                 numberOfAnimalsByCell[i][j] = new ArrayList<>();
+                availableMovementsInEachCell[i][j] = new ArrayList<>();
             }
         }
     }
 
     public void determineNumberOfAnimalsByCell() {
-        System.out.println("2. Hola determineNumberOfCreaturesByCell");
+        System.out.println("2. Determine number of animals by cell.");
         int limit = 4;
         Random random = new Random();
 
         for (List<Integer>[] lists : numberOfAnimalsByCell) {
-            for (int i = 0; i < numberOfAnimalsByCell.length; i++) {
+            for (int i = 0; i < lists.length; i++) {
                 lists[i].add(random.nextInt(limit) + 1);
             }
         }
-        for (int i = 0; i < numberOfAnimalsByCell.length; i++) {
-            for (int j = 0; j < numberOfAnimalsByCell.length; j++) {
+        for (int i = 0; i < enviromentRows; i++) {
+            for (int j = 0; j < enviromentColumns; j++) {
                 for (Integer numbers : numberOfAnimalsByCell[i][j]) {
                     System.out.printf("C-[%d][%d]: %d\t", i, j, numbers);
                 }
@@ -71,100 +106,79 @@ public class Enviroment {
     }
 
     public void determineAnimalsByCode() {
-        System.out.println("3. Hola determineCreatureByCode");
+        System.out.println("3. Create and assign animals by cell.");
         Random random = new Random();
         int animalCode;
-        //String[] creatureNames = new String[numberOfCreatures];
-        //String[][] creatureNames = new String[numberOfCreatures.length][numberOfCreatures.length];
-        //List<String>[][] creatureNames = new ArrayList[enviromentWidth][enviromentHeight];
 
-        for (int i = 0; i < numberOfAnimalsByCell.length; i++) {
-            for (int j = 0; j < numberOfAnimalsByCell.length; j++) {
+        for (int i = 0; i < enviromentRows; i++) {
+            for (int j = 0; j < enviromentColumns; j++) {
                 for (Integer number : numberOfAnimalsByCell[i][j]) {
                     for (int k = 0; k < number; k++) {
-                        animalCode = random.nextInt(AvailableLivingCreatureCodes.values().length);
-                        //System.out.println(animalCode);
-                        String animalType = AvailableLivingCreatureCodes.getCreatureByType(animalCode);
-                        //System.out.println(animalType);
-                        switch (animalType) {
+                        animalCode = random.nextInt(AvailableAnimals.values().length);
+                        String animalName = AvailableAnimals.getAnimalNameByCode(animalCode);
+                        switch (animalName) {
                             case "BEAR":
-                                Bear bear = new Bear();
-                                bear.setAlive(true);
+                                Animal bear = new Bear();
                                 animalContainer[i][j].add(bear);
                                 break;
                             case "BOA":
-                                Boa boa = new Boa();
-                                boa.setAlive(true);
+                                Animal boa = new Boa();
                                 animalContainer[i][j].add(boa);
                                 break;
                             case "EAGLE":
-                                Eagle eagle = new Eagle();
-                                eagle.setAlive(true);
+                                Animal eagle = new Eagle();
                                 animalContainer[i][j].add(eagle);
                                 break;
                             case "FOX":
-                                Fox fox = new Fox();
-                                fox.setAlive(true);
+                                Animal fox = new Fox();
                                 animalContainer[i][j].add(fox);
                                 break;
                             case "WOLF":
-                                Wolf wolf = new Wolf();
-                                wolf.setAlive(true);
+                                Animal wolf = new Wolf();
                                 animalContainer[i][j].add(wolf);
                                 break;
                             case "BOAR":
-                                Boar boar = new Boar();
-                                boar.setAlive(true);
+                                Animal boar = new Boar();
                                 animalContainer[i][j].add(boar);
                                 break;
                             case "BUFFALO":
-                                Buffalo buffalo = new Buffalo();
-                                buffalo.setAlive(true);
+                                Animal buffalo = new Buffalo();
                                 animalContainer[i][j].add(buffalo);
                                 break;
                             case "CATERPILLAR":
-                                Caterpillar caterpillar = new Caterpillar();
-                                caterpillar.setAlive(true);
+                                Animal caterpillar = new Caterpillar();
                                 animalContainer[i][j].add(caterpillar);
                                 break;
                             case "DEER":
-                                Deer deer = new Deer();
-                                deer.setAlive(true);
+                                Animal deer = new Deer();
                                 animalContainer[i][j].add(deer);
                                 break;
                             case "DUCK":
-                                Duck duck = new Duck();
-                                duck.setAlive(true);
+                                Animal duck = new Duck();
                                 animalContainer[i][j].add(duck);
                                 break;
                             case "GOAT":
-                                Goat goat = new Goat();
-                                goat.setAlive(true);
+                                Animal goat = new Goat();
                                 animalContainer[i][j].add(goat);
                                 break;
                             case "HORSE":
-                                Horse horse = new Horse();
-                                horse.setAlive(true);
+                                Animal horse = new Horse();
                                 animalContainer[i][j].add(horse);
                                 break;
                             case "MOUSE":
-                                Mouse mouse = new Mouse();
-                                mouse.setAlive(true);
+                                Animal mouse = new Mouse();
                                 animalContainer[i][j].add(mouse);
                                 break;
                             case "RABBIT":
-                                Rabbit rabbit = new Rabbit();
-                                rabbit.setAlive(true);
+                                Animal rabbit = new Rabbit();
                                 animalContainer[i][j].add(rabbit);
                                 break;
                             case "SHEEP":
-                                Sheep sheep = new Sheep();
-                                sheep.setAlive(true);
+                                Animal sheep = new Sheep();
                                 animalContainer[i][j].add(sheep);
                                 break;
                             case "PLANT":
-                                Plant plant = new Plant();
-                                plant.setAlive(true);
+                                Animal plant = new Plant();
                                 animalContainer[i][j].add(plant);
                                 break;
                             default:
@@ -176,117 +190,165 @@ public class Enviroment {
         }
     }
 
+    public void determinePossibleMovements() {
+        System.out.println("4. Identify possible movements by cell.");
 
-    public void displayEnviroment() {
-        for (int i = 0; i < animalContainer.length; i++) {
-            System.out.println("Row: "+i );
-            for (int j = 0; j < animalContainer.length; j++) {
-                System.out.printf("Cell-[%d][%d]: ", i, j);
-                for (Animal animal : animalContainer[i][j]) {
-                    Class<?>[] interfaces = animal.getClass().getInterfaces();
-                    for (Class<?> interf : interfaces){
-                        System.out.print(animal.getClass().getSimpleName() + "-(Alive: " + animal.isAlive() + ", type: "+ interf.getSimpleName() + ") | ");
-                    }
-
-
+        for (int i = 0; i < enviromentRows; i++) {
+            for (int j = 0; j < enviromentColumns; j++) {
+                if (i != enviromentRows - 1) {
+                    availableMovementsInEachCell[i][j].add(AvailableMovements.DOWN.getAnimalMoveCode());
                 }
+                if (i != 0) {
+                    availableMovementsInEachCell[i][j].add(AvailableMovements.UP.getAnimalMoveCode());
+                }
+                if (j != enviromentColumns - 1) {
+                    availableMovementsInEachCell[i][j].add(AvailableMovements.RIGHT.getAnimalMoveCode());
+                }
+                if (j != 0) {
+                    availableMovementsInEachCell[i][j].add(AvailableMovements.LEFT.getAnimalMoveCode());
+                }
+            }
+        }
+    }
 
-                System.out.println();
-                //System.out.print("|\t");
+    public void displayAnimalLocation() {
+        System.out.println("5. Display animals by cell.");
+        String avatar = "";
+
+        for (int i = 0; i < enviromentRows; i++) {
+            for (int j = 0; j < enviromentColumns; j++) {
+                StringBuffer avatars = new StringBuffer();
+                for (Animal animal1 : animalContainer[i][j]) {
+                    avatars.append(AvailableAnimals.getAvatarByAnimalName(animal1.getClass().getSimpleName())).append(" ");
+                }
+                animalContainerRepresentation[i][j] = avatars.toString().trim();
+            }
+        }
+        for (int i = 0; i < enviromentRows; i++) {
+            for (int j = 0; j < enviromentColumns; j++) {
+                System.out.printf(" | C-[%d][%d]: %s ", i, j, animalContainerRepresentation[i][j]);
             }
             System.out.println();
         }
-/*
-        for (int i = 0; i < creatureContainer.length; i++) {
-            // First print the creature count for each cell in the row
-            for (int j = 0; j < creatureContainer[i].length; j++) {
-                System.out.printf("C-[%d][%d] - # Creatures: %d\t", i, j, creatureContainer[i][j].size());
+    }
+
+
+    public void moveAnimal(Enviroment enviromentInformation) {
+        System.out.println("Animals on movement");
+        ExecutorService moveThreadPool = Executors.newFixedThreadPool(enviromentRows * enviromentColumns);
+        Random random = new Random();
+
+        for (int i = 0; i < enviromentRows; i++) {
+            for (int j = 0; j < enviromentColumns; j++) {
+                List<Animal> animalList = new ArrayList<>(animalContainer[i][j]);
+                List<Integer> movementsList = getAvailableMovementsInEachCell()[i][j];
+
+                for (Animal animal : animalList) {
+                    final int row = i;
+                    final int col = j;
+                    final int radomMovement = movementsList.get(random.nextInt(movementsList.size()));
+
+                    moveThreadPool.submit(() -> {
+                        synchronized (enviromentInformation.getAnimalContainer()) {
+                            animal.move(row, col, radomMovement, enviromentInformation);
+                        }
+                    });
+                }
             }
-            System.out.println();
+        }
+        moveThreadPool.shutdownNow();
+        try {
+            if (!moveThreadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                System.err.println("Some tasks did not complete in time.");
+                moveThreadPool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Thread pool interrupted: " + e.getMessage());
+        }
+        System.out.println("Movement logic completed.");
+    }
 
-            // Now print each creature's information in each cell in the same row
-            boolean moreCreatures = true; // Flag to check if any cell has more creatures left to display
-            int creatureIndex = 0;
+    public void eatAnotherAnimal(Enviroment enviromentInformation) {
+        System.out.println("Let's eat something");
+        ExecutorService eatThreadPool = Executors.newFixedThreadPool(enviromentRows * enviromentColumns);
 
-            while (moreCreatures) {
-                moreCreatures = false; // Assume there are no more creatures left initially
+        for (int i = 0; i < enviromentRows; i++) {
+            System.out.println("Row: " + i);
+            for (int j = 0; j < enviromentColumns; j++) {
+                List<Animal> animalList = new ArrayList<>(animalContainer[i][j]);
+                System.out.printf("Animals in cell [%d][%d] ready to eat: \n", i, j);
+                for (Animal animal : animalList) {
+                    System.out.printf("%s\t", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()));
+                }
+                System.out.println();
 
-                for (int j = 0; j < creatureContainer[i].length; j++) {
-                    if (creatureIndex < creatureContainer[i][j].size()) {
-                        // Get the creature from the list at the current index if it exists
-                        Object animal = creatureContainer[i][j].get(creatureIndex);
-                        String creatureName = animal.getClass().getSimpleName();
-                        System.out.printf("C-[%d][%d]%s\t", i, j, creatureName);
-                        moreCreatures = true; // Set flag to true as there are more creatures to display
+                for (Animal animal : animalList) {
+                    final int row = i;
+                    final int col = j;
+
+                    if (animalContainer[i][j].size() > 1) {
+                        eatThreadPool.submit(() -> {
+                            synchronized (enviromentInformation.getAnimalContainer()) {
+                                animal.eat(animalList, enviromentInformation);
+                            }
+                        });
                     } else {
-                        // Print empty space if no more creatures in this cell
-                        System.out.print("\t\t\t");
-                    }
-                }
-                System.out.println();
-                creatureIndex++; // Move to the next creature in each cell’s list
-            }
-        }
-
-*/
-
-    }
-
-
-
-
-/*
-            for (int i = 0; i < numberOfCreatures.length; i++) {
-                creatureCode = random.nextInt(limit);
-                for (AvailableLivingCreatureCodes creature : AvailableLivingCreatureCodes.values()){
-                    if(creature.getLivingCreatureCode() == creatureCode){
-                       creatureNames[i] = creature.name();
-                        System.out.println(creature.name()+" code: " +creature.getLivingCreatureCode());
+                        System.out.printf("The %s is alone, there is nothing to eat in cell [%d][%d]", AvailableAnimals.getAvatarByAnimalName(animalContainer[i][j].getClass().getSimpleName()), i, j);
                     }
                 }
             }
-        //return creatureNames;
+        }
+        eatThreadPool.shutdown();
+        try {
+            if (!eatThreadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                System.err.println("Eat tasks did not complete in time.");
+                eatThreadPool.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Thread pool interrupted: " + e.getMessage());
+        }
+        System.out.println("Eat logic completed.");
     }
 
-    public void setCreaturesInCell(List<Animal> animalList) {
-        System.out.println("Hola setCreaturesInCell");
-        for (int i = 0; i < creatureContainer.length; i++) {
-            for (int j = 0; j < creatureContainer.length; j++) {
-                for (Animal animalObject : animalList) {
-                    creatureContainer[i][j].add(animalObject);
+    public void displayAnimalHistory() {
+        System.out.println("Animal history");
+
+        for (int i = 0; i < enviromentRows; i++) {
+            System.out.println("Row: " + i);
+            for (int j = 0; j < enviromentColumns; j++) {
+                System.out.printf("Cell-[%d][%d]\n", i, j);
+                for (Animal animal : animalContainer[i][j]) {
+                    System.out.printf(animal.getAnimalMemory());
+
                 }
             }
         }
-        System.out.println("Animals created:");
-        for (int i = 0; i < creatureContainer.length; i++) {
-            System.out.println("Row-" + i);
-            for (Animal animal : animalList) {
-                for (int j = 0; j < creatureContainer.length; j++) {
-                    System.out.print("Col-" + j + " " + animal.getClass().getSimpleName() + "\t");
+    }
+
+
+    public void identifyTypeOfAnimal() {
+        System.out.println("Identify type of animals");
+
+        for (int i = 0; i < enviromentRows; i++) {
+            // System.out.println("Row: " + i);
+            for (int j = 0; j < enviromentColumns; j++) {
+                //System.out.printf("Cell-[%d][%d]", i, j);
+                for (Animal animal : animalContainer[i][j]) {
+                    if (animal.isAlive && animal instanceof Carnivore) {
+                        livingCarnivores.add(animal);
+                    } else if (animal.isAlive && animal instanceof Herbivore) {
+                        livingHerbivores.add(animal);
+                    } else if (animal.isAlive && animal instanceof Photosynthetic) {
+                        livingPlants.add(animal);
+                    } else {
+                        deadAnimals.add(animal);
+                    }
                 }
-                System.out.println();
             }
-            System.out.println();
         }
-
     }
 
 
-    public List<Animal> provideCreature(List<String>[][] creatureNames) {
-        System.out.println("4. Hola provideCreature");
-        List<Animal> animalList = new ArrayList<>();
-
-        System.out.println("Creaturas recibidas");
-        for (int i = 0; i <creatureNames.length ; i++) {
-            for (int j = 0; j <creatureNames.length ; j++) {
-                System.out.println(creatureNames[i][j]);
-            }
-        }
-
-        return animalList;
-    }
-
- */
 }
 
 

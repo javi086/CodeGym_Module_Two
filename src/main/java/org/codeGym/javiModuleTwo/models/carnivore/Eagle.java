@@ -1,19 +1,18 @@
 package org.codeGym.javiModuleTwo.models.carnivore;
 
 import org.codeGym.javiModuleTwo.models.Animal;
+import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
-public class Eagle extends Animal implements Carnivore {
+import java.util.List;
 
-    @Override
-    public void eat() {
+public class Eagle extends Animal implements  Carnivore{
 
+
+    public void eat(List<Animal> animalList) {
+        System.out.println("La aguila va a comer");
     }
 
-    @Override
-    public void move() {
-
-    }
 
     @Override
     public void breed() {
@@ -26,7 +25,7 @@ public class Eagle extends Animal implements Carnivore {
     }
 
     @Override
-    public void hunt() {
-
+    public boolean hunt(List<Animal> preyList) {
+        return false;
     }
 }
