@@ -14,8 +14,6 @@ public class Bear extends Animal implements Carnivore {
         System.out.println("El oso va a comer");
     }
 
-
-
     @Override
     public void breed() {
 

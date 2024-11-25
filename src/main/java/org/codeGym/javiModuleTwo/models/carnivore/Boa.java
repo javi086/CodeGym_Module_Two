@@ -10,15 +10,6 @@ import java.util.List;
 public class Boa extends Animal implements Carnivore {
 
 
-
-
-
-    public void eat(List<Animal> animalList) {
-        System.out.println("La boa va a comer");
-    }
-
-
-
     @Override
     public void breed() {
 

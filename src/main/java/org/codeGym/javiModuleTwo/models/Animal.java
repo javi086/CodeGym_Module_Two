@@ -12,15 +12,40 @@ import java.util.*;
 
 public abstract class Animal {
 
-
-
-    public float weight;
+    public boolean isHungry;
     public boolean isAlive;
     public char gender;
     public int possibilityOfBeingEaten;
     public Map<String, String> animalMemory = new HashMap<>();
-    //public Enviroment enviroment = new Enviroment();
 
+    protected Animal() {
+        this.setAlive(true);
+        this.setHungry(true);
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
+
+    public char getGender() {
+        return gender;
+    }
+
+    public void setGender(char gender) {
+        this.gender = gender;
+    }
+
+    public boolean isHungry() {
+        return isHungry;
+    }
+
+    public void setHungry(boolean hungry) {
+        isHungry = hungry;
+    }
 
     public void setPossibilityOfBeingEaten(int possibility) {
         this.possibilityOfBeingEaten = possibility;
@@ -78,43 +103,52 @@ public abstract class Animal {
     }
 
     public void eat(List<Animal> animalList, Enviroment enviromentInformation) {
-        System.out.println("Animal ready to eat");
         Random random = new Random();
-        Set<Integer> indexOfAnimalsAlreadySelected = new HashSet<>();
+        Set<Integer> indexOfAnimalsChoosenRandomlyOrEaten = new HashSet<>();
         Map<Animal, Integer> possibilityOfBeEaten = new HashMap<>();
 
-        /*
-        * REVISA EL CASO DONDE LA LISTA ES DE UN SOLO INTEGRANTE
-        * REVISA QUE SI VIENEN POSIBILIDADDES DE CERO NO DE REGRESE UN MAX PUES NO HAY NADA QUE COMER
-        * REVISA ELSE PARA EL CASO DE LAS PLANTAS
-        * DEBUEALO
-        * */
 
-        while (indexOfAnimalsAlreadySelected.size() < animalList.size()) {
+        /*
+         * REVISA EL CASO DONDE LA LISTA ES DE UN SOLO INTEGRANTE
+         * REVISA QUE SI VIENEN POSIBILIDADDES DE CERO NO DE REGRESE UN MAX PUES NO HAY NADA QUE COMER
+         * REVISA ELSE PARA EL CASO DE LAS PLANTAS
+         * DEBUEALO
+         * */
+
+        while (indexOfAnimalsChoosenRandomlyOrEaten.size() < animalList.size()) {
+            possibilityOfBeEaten.clear();
             int randomIndexAnimalSelect = random.nextInt(animalList.size());
-            System.out.println("Indice random:" + randomIndexAnimalSelect);
-            if (indexOfAnimalsAlreadySelected.add(randomIndexAnimalSelect)) {
-                System.out.println(animalList.get(randomIndexAnimalSelect));
+            Animal hunter = animalList.get(randomIndexAnimalSelect);
+            if (indexOfAnimalsChoosenRandomlyOrEaten.add(randomIndexAnimalSelect) && hunter.isHungry()) {
+                System.out.printf("Animal selected randomly: %s %n", hunter.getClass().getSimpleName());
+
                 //Verify possibility of be eaten for each animal
                 for (Animal animal : animalList) {
-                    if(!animal.equals(animalList.get(randomIndexAnimalSelect))) {
-                        verifyPossibilityOfBeEaten(animalList.get(randomIndexAnimalSelect), animal);
-                        System.out.println("Animal: " + animal.getClass().getSimpleName() +  "Possibility: " + animal.getPossibilityOfBeingEaten());
+                    if (!animal.equals(hunter)) {
+                        verifyPossibilityOfBeEaten(hunter, animal);
+                        System.out.println("Animal as prey: " + animal.getClass().getSimpleName() + " Possibility of be eaten: " + animal.getPossibilityOfBeingEaten());
                         possibilityOfBeEaten.put(animal, animal.getPossibilityOfBeingEaten());
                     }
                 }
-                //Determine animal to be eaten based on max possibility obtained, except for plants
-                if(!(animalList.get(randomIndexAnimalSelect) instanceof Plant)) {
-                    Map.Entry<Animal, Integer> mostLikekyAnimalOfBeEaten = possibilityOfBeEaten.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
-                    if (mostLikekyAnimalOfBeEaten != null) {
-                        enviromentInformation.setDeadAnimals(mostLikekyAnimalOfBeEaten.getKey());
-                        animalList.remove(mostLikekyAnimalOfBeEaten.getKey());
-                        animalList.get(randomIndexAnimalSelect).setAnimalMemory("Eat", mostLikekyAnimalOfBeEaten.getKey().getClass().getSimpleName());
-                        System.out.println("Animal with max value: " + mostLikekyAnimalOfBeEaten.getKey());
 
+                //Determine animal to be eaten based on max possibility obtained, except for plants
+                if (!(hunter instanceof Plant)) {
+                    Map.Entry<Animal, Integer> mostLikekyAnimalOfBeEaten = possibilityOfBeEaten.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
+                    if (mostLikekyAnimalOfBeEaten != null && mostLikekyAnimalOfBeEaten.getValue() > 0) {
+                        System.out.printf("The %s has identified a prey, %s with max probability of: %d %n",
+                                animalList.get(randomIndexAnimalSelect).getClass().getSimpleName(),
+                                mostLikekyAnimalOfBeEaten.getKey().getClass().getSimpleName(),
+                                mostLikekyAnimalOfBeEaten.getValue());
+                        animalList.get(randomIndexAnimalSelect).setHungry(false);
+                        enviromentInformation.setDeadAnimals(mostLikekyAnimalOfBeEaten.getKey());
+                        animalList.get(randomIndexAnimalSelect).setAnimalMemory("Eat", mostLikekyAnimalOfBeEaten.getKey().getClass().getSimpleName());
+                        animalList.remove(mostLikekyAnimalOfBeEaten.getKey());
+                        //possibilityOfBeEaten.remove(mostLikekyAnimalOfBeEaten.getKey(), mostLikekyAnimalOfBeEaten.getValue());
                     }
-                }else {
-                    System.out.println("Soy una planta no como a nadie");
+                } else if (animalList.get(randomIndexAnimalSelect) instanceof Plant) {
+                    ((Plant) animalList.get(randomIndexAnimalSelect)).eat();
+                } else {
+                    System.out.println("There is not more possible preys to eat here!");
                 }
             }
         }
@@ -129,58 +163,30 @@ public abstract class Animal {
     public void die() {
     }
 
-    ;
+    public void verifyPossibilityOfBeEaten(Animal animalAsHunter, Animal animalAsPrey) {
+        // The matrix directly represents the provided table
+        int[][] possibilityMatrix = {
+                // Wolf Boa Fox Bear Eagle Horse Deer Rabbit Mouse Goat Sheep Boar Buffalo Duck Caterpillar Plant
+                /*Wolf*/        {0, 0, 0, 0, 0, 10, 15, 60, 80, 60, 70, 15, 10, 40, 0, 0}, // Wolf
+                /*Boa*/         {0, 0, 15, 0, 0, 0, 0, 20, 40, 0, 0, 0, 0, 10, 0, 0}, // Boa
+                /*Fox*/         {0, 0, 0, 0, 0, 0, 0, 70, 90, 0, 0, 0, 0, 60, 40, 0}, // Fox
+                /*Bear*/        {0, 80, 0, 0, 0, 40, 80, 80, 90, 70, 70, 50, 20, 10, 0, 0}, // Bear
+                /*Eagle*/       {0, 0, 10, 0, 0, 0, 0, 90, 90, 0, 0, 0, 0, 80, 0, 0}, // Eagle
+                /*Horse*/       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100}, // Horse
+                /*Deer*/        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100}, // Deer
+                /*Rabbit*/      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100}, // Rabbit
+                /*Mouse*/       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 100}, // Mouse
+                /*Goat*/        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100}, // Goat
+                /*Sheep*/       {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100}, // Sheep
+                /*Boar*/        {0, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 0, 90, 100}, // Boar
+                /*Buffalo*/     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100}, // Buffalo
+                /*Duck*/        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 100}, // Duck
+                /*Caterpillar*/ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100}, // Caterpillar
+                /*Plant */      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},   //Plant
+        };
 
-
-    public float getWeight() {
-        return weight;
+        int possibility = possibilityMatrix[AvailableAnimals.getAnimalCodeByName(animalAsHunter.getClass().getSimpleName().toUpperCase())][AvailableAnimals.getAnimalCodeByName(animalAsPrey.getClass().getSimpleName().toUpperCase())];
+        animalAsPrey.setPossibilityOfBeingEaten(possibility);
     }
-
-    public void setWeight(float weight) {
-        this.weight = weight;
-    }
-
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }
-
-    public char getGender() {
-        return gender;
-    }
-
-    public void setGender(char gender) {
-        this.gender = gender;
-    }
-
-
-public void verifyPossibilityOfBeEaten(Animal animalAsHunter, Animal animalAsPrey){
-    // The matrix directly represents the provided table
-    int[][] possibilityMatrix = {
-                        // Wolf Boa Fox Bear Eagle Horse Deer Rabbit Mouse Goat Sheep Boar Buffalo Duck Caterpillar Plants
-            /*Wolf*/        {0,  0,  0,  0,  0, 10, 15, 60, 80, 60, 70, 15, 10, 40,  0, 0}, // Wolf
-            /*Boa*/         {0,  0, 15,  0,  0,  0,  0, 20, 40,  0,  0,  0,  0, 10,  0, 0}, // Boa
-            /*Fox*/         {0,  0,  0,  0,  0,  0,  0, 70, 90,  0,  0,  0,  0, 60, 40, 0}, // Fox
-            /*Bear*/        {0, 80,  0,  0,  0, 40, 80, 80, 90, 70, 70, 50, 20, 10,  0, 0}, // Bear
-            /*Eagle*/       {0,  0, 10,  0,  0,  0,  0, 40, 10,  0,  0,  0,  0, 80,  0, 0}, // Eagle
-            /*Horse*/       {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Horse
-            /*Deer*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Deer
-            /*Rabbit*/      {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Rabbit
-            /*Mouse*/       {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Mouse
-            /*Goat*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Goat
-            /*Sheep*/       {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Sheep
-            /*Boar*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Boar
-            /*Buffalo*/     {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Buffalo
-            /*Duck*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Duck
-            /*Caterpillar*/ {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 100}, // Caterpillar
-            /*Plan*/        {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0},   //Plant
-    };
-
-    int possibility = possibilityMatrix[AvailableAnimals.getAnimalCodeByName(animalAsHunter.getClass().getSimpleName().toUpperCase())][AvailableAnimals.getAnimalCodeByName(animalAsPrey.getClass().getSimpleName().toUpperCase())];
-    animalAsPrey.setPossibilityOfBeingEaten(possibility);
-}
 
 }

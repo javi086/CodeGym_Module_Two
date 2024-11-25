@@ -10,24 +10,7 @@ import java.util.Random;
 public class Wolf extends Animal implements Carnivore {
 
 
-    public Wolf() {
-        this.setAlive(true);
-    }
 
-    public void eat(List<Animal> preyList) {
-        /*boolean wasTheHuntSuccessful = false;
-        System.out.println("El lobo se prepara para cazar");
-        wasTheHuntSuccessful = hunt(preyList);
-        if (wasTheHuntSuccessful){
-            //System.out.println("El lobo esta comiendo");
-            animalMemory.put("Eat", "El lobo esta comiendo");
-        }
-        else{
-            System.out.println("El lobo sigue con hambre");
-            animalMemory.put("Eat", "El lobo sigue con hambre");
-        }*/
-
-    }
     @Override
     public boolean hunt(List<Animal> possiblePreyList) {
         Random random = new Random();
@@ -39,9 +22,6 @@ public class Wolf extends Animal implements Carnivore {
 
         }
 return  true;
-        /*int preyIndex = random.nextInt(preyList.size());
-        preyList.get(preyIndex).setAlive(false);
-        return true;*/
     }
 
 

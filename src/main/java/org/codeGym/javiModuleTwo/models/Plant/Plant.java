@@ -11,36 +11,21 @@ public class Plant  extends Animal implements Photosynthetic {
 
 
 
-    public void eat(List<Animal> animalList) {
-    }
-
     public void eat(){
-        System.out.println("La planta se esta alimentando de la tierra");
+        System.out.println("The plant is feeding from the ground.");
     }
 
-
-    @Override
     public void breed() {
-
+        System.out.println("The plant spreads its spores to reproduce");
     }
 
-    @Override
-    public void die() {
 
+    public void die() {
+        System.out.println("The was eaten by an animal");
     }
 
     @Override
     public void performPhotosynthesis() {
-
+        System.out.println("The plant is happy and implementing photosynthesis");
     }
-
-    /*private boolean isAlive;
-
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void setAlive(boolean alive) {
-        isAlive = alive;
-    }*/
 }

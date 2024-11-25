@@ -53,7 +53,7 @@ public enum AvailableAnimals {
     }
 
     public static int getAnimalCodeByName(String name){
-        int animalCode=0;
+        int animalCode=56;
         for (AvailableAnimals animal : AvailableAnimals.values()){
             if(animal.name().equals(name)){
                animalCode=animal.getAnimalCode();
