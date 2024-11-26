@@ -21,6 +21,7 @@ public abstract class Animal {
     protected Animal() {
         this.setAlive(true);
         this.setHungry(true);
+        this.assignSexualityRandomly();
     }
 
     public boolean isAlive() {
@@ -33,6 +34,16 @@ public abstract class Animal {
 
     public char getGender() {
         return gender;
+    }
+
+    private void assignSexualityRandomly(){
+        Random random = new Random();
+        int randomlySelectedSexuality = random.nextInt(2);
+        if (randomlySelectedSexuality == 0){
+            setGender('F');
+        }else {
+            setGender('M');
+        }
     }
 
     public void setGender(char gender) {
@@ -155,10 +166,52 @@ public abstract class Animal {
     }
 
 
-    public void breed() {
+    public void breed(Enviroment enviromentInformation) {
+       List<Animal> newBabyAnimals = new ArrayList<>();
+        for (int i = 0; i < enviromentInformation.getEnviromentRows() ; i++) {
+            for (int j = 0; j < enviromentInformation.getEnviromentColumns() ; j++) {
+               // List<Animal> animalListInCell = Arrays.stream(enviromentInformation.getAnimalContainer()).findAny(getGender('M'))
+                List<Animal> animalListInCell = enviromentInformation.getAnimalContainer()[i][j];
+
+                         if(animalListInCell.size() > 1) {
+                             Set<Animal> animalsAlreadySelected = new HashSet<>();
+
+                             for (int k = 0; k <animalListInCell.size() ; k++) {
+                                   Animal animal = animalListInCell.get(k);
+                                 for (int l = k + 1; l <animalListInCell.size() ; l++) {
+                                    Animal animal1 = animalListInCell.get(l);
+
+                                     if (!animalsAlreadySelected.contains(animal) &&
+                                         !animalsAlreadySelected.contains(animal1) &&
+                                         animal.getGender() != animal1.getGender() &&
+                                         animal.getClass().equals(animal1.getClass())){
+
+                                        try {
+                                            Animal newBabyAnimals = animal.getClass().getDeclaredConstructor().newInstance();
+                                            animalsAlreadySelected.add(animal);
+                                            animalsAlreadySelected.add(animal1);
+                                        } catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+
+                                     }
+
+                                 }
+                             }
+                        }
+                if(j > 0){
+
+                    for(Animal animal : newBabyAnimals){
+                        enviromentInformation.getAnimalContainer()[i][j-1].add(animal);
+                    }
+                }
+            }
+
+        }
+
+
     }
 
-    ;
 
     public void die() {
     }
