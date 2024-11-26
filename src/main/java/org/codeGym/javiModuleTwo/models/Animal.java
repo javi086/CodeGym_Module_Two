@@ -164,7 +164,6 @@ public abstract class Animal {
     }
 
     public void verifyPossibilityOfBeEaten(Animal animalAsHunter, Animal animalAsPrey) {
-        // The matrix directly represents the provided table
         int[][] possibilityMatrix = {
                 // Wolf Boa Fox Bear Eagle Horse Deer Rabbit Mouse Goat Sheep Boar Buffalo Duck Caterpillar Plant
                 /*Wolf*/        {0, 0, 0, 0, 0, 10, 15, 60, 80, 60, 70, 15, 10, 40, 0, 0}, // Wolf

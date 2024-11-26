@@ -20,7 +20,8 @@ public class Main {
         enviroment.eatAnotherAnimal(enviroment);
         enviroment.displayAnimalLocation();
         enviroment.displayAnimalHistory();
-/*
+
+        /* Temporal information just for testing the eat method.
         List<Animal> prueba = new ArrayList<>(3);
         prueba.add(new Fox());
         prueba.add(new Plant());

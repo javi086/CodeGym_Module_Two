@@ -22,15 +22,13 @@ public class Enviroment {
     private final List<Integer>[][] numberOfAnimalsByCell = new ArrayList[enviromentRows][enviromentColumns];
     private final List<Integer>[][] availableMovementsInEachCell = new ArrayList[enviromentRows][enviromentColumns];
     String[][] animalContainerRepresentation = new String[enviromentRows][enviromentColumns];
-    private final Integer[][] possibilityOFBeEatenContaniner = new Integer[AvailableAnimals.values().length][AvailableAnimals.values().length];
-    public Map<String, Integer> possibi = new HashMap<>();
     private List<Animal> livingCarnivores = new ArrayList<>();
     private List<Animal> livingHerbivores = new ArrayList<>();
     private List<Animal> livingAnimals = new ArrayList<>();
     private List<Animal> livingPlants = new ArrayList<>();
     private List<Animal> deadAnimals = new ArrayList<>();
 
-
+//Essential methods to set before starting the move, eat, reproduce actions.
     public Enviroment() {
         prepareEnviromentArrays();
         determineNumberOfAnimalsByCell();
@@ -40,7 +38,7 @@ public class Enviroment {
         displayAnimalLocation();
 
     }
-
+//EnviromentsRows get and set pending of being used until the Scanner is implemented
     public int getEnviromentRows() {
         return enviromentRows;
     }
@@ -213,7 +211,6 @@ public class Enviroment {
 
     public void displayAnimalLocation() {
         System.out.println("5. Display animals by cell.");
-        String avatar = "";
 
         for (int i = 0; i < enviromentRows; i++) {
             for (int j = 0; j < enviromentColumns; j++) {
@@ -283,8 +280,6 @@ public class Enviroment {
                 System.out.println();
 
                 for (Animal animal : animalList) {
-                    final int row = i;
-                    final int col = j;
 
                     if (animalContainer[i][j].size() > 1) {
                         eatThreadPool.submit(() -> {
