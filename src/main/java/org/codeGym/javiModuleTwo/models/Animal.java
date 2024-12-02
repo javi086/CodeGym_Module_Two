@@ -2,26 +2,25 @@ package org.codeGym.javiModuleTwo.models;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Plant.Plant;
-import org.codeGym.javiModuleTwo.models.carnivore.*;
 import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
-import org.codeGym.javiModuleTwo.models.herbivore.*;
-import org.codeGym.javiModuleTwo.services.Carnivore;
 
-import java.security.Key;
 import java.util.*;
 
 public abstract class Animal {
 
     public boolean isHungry;
     public boolean isAlive;
-    public char gender;
+    public String gender;
+    public String typeOfAnimal;
     public int possibilityOfBeingEaten;
-    public Map<String, String> animalMemory = new HashMap<>();
+    public  Map<String, String> animalMemory = new HashMap<>();
+
 
     protected Animal() {
         this.setAlive(true);
         this.setHungry(true);
-        this.assignSexualityRandomly();
+        this.assignGenderRandomly();
+        //this.setAnimalMemory("Sex:", getGender());
     }
 
     public boolean isAlive() {
@@ -32,22 +31,30 @@ public abstract class Animal {
         isAlive = alive;
     }
 
-    public char getGender() {
+    public String getGender() {
         return gender;
     }
 
-    private void assignSexualityRandomly(){
+    private void assignGenderRandomly(){
         Random random = new Random();
         int randomlySelectedSexuality = random.nextInt(2);
         if (randomlySelectedSexuality == 0){
-            setGender('F');
+            setGender("F");
         }else {
-            setGender('M');
+            setGender("M");
         }
     }
 
-    public void setGender(char gender) {
+    public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getTypeOfAnimal() {
+        return typeOfAnimal;
+    }
+
+    public void setTypeOfAnimal(String typeOfAnimal) {
+        this.typeOfAnimal = typeOfAnimal;
     }
 
     public boolean isHungry() {
@@ -70,116 +77,123 @@ public abstract class Animal {
         animalMemory.put(key, value);
     }
 
-    public String getAnimalMemory() {
-        String memory = "";
-        for (String memoryRecord : animalMemory.values()) {
-            memory = memoryRecord;
-        }
-        return memory;
+    public  Map<String, String> getAnimalMemory() {
+        return animalMemory;
     }
 
 
     public void move(int row, int col, int radomMovement, Enviroment enviroment) {
-        String message = "The %s %s moved from the initial position [%d][%d] to the final position [%d][%d]\n";
-        String recordOfMovement;
+        String memoryMessage = "The %s %s moved from [%d][%d] to [%d][%d]";
+        String memoryMessageFormatted;
 
         if (radomMovement == 0 && enviroment.getAnimalContainer()[row][col].size() > 1) {
             //System.out.printf("[%d][%d]-Inicial\n", i, j);
             enviroment.getAnimalContainer()[row][col - 1].add(this);
             enviroment.getAnimalContainer()[row][col].remove(this);
             //System.out.printf("%s: Initial-[%d][%d]-Final[%d][%d]\n", this.getClass().getSimpleName(), row, col, row, col - 1);
-            recordOfMovement = String.format(message, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col, row, col - 1);
-            setAnimalMemory("Movement", recordOfMovement);
+            memoryMessageFormatted = String.format(memoryMessage, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col, row, col - 1);
+            setAnimalMemory("Movement:", memoryMessageFormatted);
         } else if (radomMovement == 1 && enviroment.getAnimalContainer()[row][col].size() > 1) {
             enviroment.getAnimalContainer()[row - 1][col].add(this);
             enviroment.getAnimalContainer()[row][col].remove(this);
-            recordOfMovement = String.format(message, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col, row - 1, col);
-            setAnimalMemory("Movement", recordOfMovement);
+            memoryMessageFormatted = String.format(memoryMessage, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col, row - 1, col);
+            setAnimalMemory("Movement:", memoryMessageFormatted);
         } else if (radomMovement == 2 && enviroment.getAnimalContainer()[row][col].size() > 1) {
             enviroment.getAnimalContainer()[row][col + 1].add(this);
             enviroment.getAnimalContainer()[row][col].remove(this);
-            recordOfMovement = String.format(message, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col, row, col + 1);
-            setAnimalMemory("Movement", recordOfMovement);
+            memoryMessageFormatted = String.format(memoryMessage, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col, row, col + 1);
+            setAnimalMemory("Movement:", memoryMessageFormatted);
         } else if (radomMovement == 3 && enviroment.getAnimalContainer()[row][col].size() > 1) {
             enviroment.getAnimalContainer()[row + 1][col].add(this);
             enviroment.getAnimalContainer()[row][col].remove(this);
-            recordOfMovement = String.format(message, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col, row + 1, col);
-            setAnimalMemory("Movement", recordOfMovement);
+            memoryMessageFormatted = String.format(memoryMessage, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col, row + 1, col);
+            setAnimalMemory("Movement:", memoryMessageFormatted);
         } else {
-            message = "The %s %s is sleepy and decided to take a nap. it didn't move at all,  original position [%d][%d]\n";
-            recordOfMovement = String.format(message, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col);
-            setAnimalMemory("Movement", recordOfMovement);
+            memoryMessage = "The %s %s is sleepy and decided to take a nap. it didn't move at all,  stays in the position [%d][%d]";
+            memoryMessageFormatted = String.format(memoryMessage, AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()), this.getClass().getSimpleName(), row, col);
+            setAnimalMemory("Movement", memoryMessageFormatted);
         }
 
     }
 
-    public void eat(List<Animal> animalList, Enviroment enviromentInformation) {
+    public void eat(List<Animal> animalListInCell, Enviroment enviromentInformation) {
         Random random = new Random();
-        Set<Integer> indexOfAnimalsChoosenRandomlyOrEaten = new HashSet<>();
+        String hunterMemoryMessage = "The %s (%s) ate a %s (%s)";
+        String preyMemoryMessage = "The %s (%s) was eaten by %s (%s)";
+        String memoryMessageFormatted;
+        Set<Integer> animalsChoosenRandomlyOrEatenAsAPrey = new HashSet<>();
         Map<Animal, Integer> possibilityOfBeEaten = new HashMap<>();
 
-
-        /*
-         * REVISA EL CASO DONDE LA LISTA ES DE UN SOLO INTEGRANTE
-         * REVISA QUE SI VIENEN POSIBILIDADDES DE CERO NO DE REGRESE UN MAX PUES NO HAY NADA QUE COMER
-         * REVISA ELSE PARA EL CASO DE LAS PLANTAS
-         * DEBUEALO
-         * */
-
-        while (indexOfAnimalsChoosenRandomlyOrEaten.size() < animalList.size()) {
+        while (animalsChoosenRandomlyOrEatenAsAPrey.size() < animalListInCell.size()) {
             possibilityOfBeEaten.clear();
-            int randomIndexAnimalSelect = random.nextInt(animalList.size());
-            Animal hunter = animalList.get(randomIndexAnimalSelect);
-            if (indexOfAnimalsChoosenRandomlyOrEaten.add(randomIndexAnimalSelect) && hunter.isHungry()) {
-                System.out.printf("Animal selected randomly: %s %n", hunter.getClass().getSimpleName());
+            int hunterRandomlySelected = random.nextInt(animalListInCell.size());
+            Animal hunter = animalListInCell.get(hunterRandomlySelected);
+            if (animalsChoosenRandomlyOrEatenAsAPrey.add(hunterRandomlySelected) && hunter.isHungry()) {
+                //System.out.printf("Animal selected randomly: %s %n", hunter.getClass().getSimpleName());
 
                 //Verify possibility of be eaten for each animal
-                for (Animal animal : animalList) {
-                    if (!animal.equals(hunter)) {
-                        verifyPossibilityOfBeEaten(hunter, animal);
-                        System.out.println("Animal as prey: " + animal.getClass().getSimpleName() + " Possibility of be eaten: " + animal.getPossibilityOfBeingEaten());
-                        possibilityOfBeEaten.put(animal, animal.getPossibilityOfBeingEaten());
+                for (Animal prey : animalListInCell) {
+                    if (!prey.equals(hunter)) {
+                        verifyPossibilityOfBeEaten(hunter, prey);
+                       // System.out.println("Animal as prey: " + prey.getClass().getSimpleName() + " Possibility of be eaten: " + prey.getPossibilityOfBeingEaten());
+                        possibilityOfBeEaten.put(prey, prey.getPossibilityOfBeingEaten());
                     }
                 }
 
                 //Determine animal to be eaten based on max possibility obtained, except for plants
                 if (!(hunter instanceof Plant)) {
-                    Map.Entry<Animal, Integer> mostLikekyAnimalOfBeEaten = possibilityOfBeEaten.entrySet().stream().max(Map.Entry.comparingByValue()).orElse(null);
-                    if (mostLikekyAnimalOfBeEaten != null && mostLikekyAnimalOfBeEaten.getValue() > 0) {
-                        System.out.printf("The %s has identified a prey, %s with max probability of: %d %n",
-                                animalList.get(randomIndexAnimalSelect).getClass().getSimpleName(),
-                                mostLikekyAnimalOfBeEaten.getKey().getClass().getSimpleName(),
-                                mostLikekyAnimalOfBeEaten.getValue());
-                        animalList.get(randomIndexAnimalSelect).setHungry(false);
-                        enviromentInformation.setDeadAnimals(mostLikekyAnimalOfBeEaten.getKey());
-                        animalList.get(randomIndexAnimalSelect).setAnimalMemory("Eat", mostLikekyAnimalOfBeEaten.getKey().getClass().getSimpleName());
-                        animalList.remove(mostLikekyAnimalOfBeEaten.getKey());
-                        //possibilityOfBeEaten.remove(mostLikekyAnimalOfBeEaten.getKey(), mostLikekyAnimalOfBeEaten.getValue());
+                   Animal mostLikekyAnimalOfBeEaten = possibilityOfBeEaten.entrySet()
+                           .stream()
+                           .max(Map.Entry.comparingByValue())
+                           .map(Map.Entry::getKey)
+                           .orElse(null);
+                    if (mostLikekyAnimalOfBeEaten != null  && mostLikekyAnimalOfBeEaten.getPossibilityOfBeingEaten() > 0) {
+                        //hunter information
+                        hunter.setHungry(false);
+                        memoryMessageFormatted = String.format(hunterMemoryMessage,
+                                AvailableAnimals.getAvatarByAnimalName(hunter.getClass().getSimpleName()),
+                                hunter.getClass().getSimpleName(),
+                                AvailableAnimals.getAvatarByAnimalName(mostLikekyAnimalOfBeEaten.getClass().getSimpleName()),
+                                mostLikekyAnimalOfBeEaten.getClass().getSimpleName());
+                        hunter.setAnimalMemory("Eat:", memoryMessageFormatted);
+
+
+                        //prey information
+                        mostLikekyAnimalOfBeEaten.setAlive(false);
+                        enviromentInformation.setDeadAnimals(mostLikekyAnimalOfBeEaten);
+                        memoryMessageFormatted = String.format(preyMemoryMessage,
+                                AvailableAnimals.getAvatarByAnimalName(mostLikekyAnimalOfBeEaten.getClass().getSimpleName()),
+                                mostLikekyAnimalOfBeEaten.getClass().getSimpleName(),
+                                AvailableAnimals.getAvatarByAnimalName(hunter.getClass().getSimpleName()),
+                                hunter.getClass().getSimpleName());
+                        mostLikekyAnimalOfBeEaten.setAnimalMemory("Eat:", memoryMessageFormatted);
+                        animalListInCell.remove(mostLikekyAnimalOfBeEaten);
+                    }else {
+                        animalListInCell.get(hunterRandomlySelected).setAnimalMemory("Eat:", "There are more animals but none of them is a possible prey");
                     }
-                } else if (animalList.get(randomIndexAnimalSelect) instanceof Plant) {
-                    ((Plant) animalList.get(randomIndexAnimalSelect)).eat();
-                } else {
-                    System.out.println("There is not more possible preys to eat here!");
+                } else if (animalListInCell.get(hunterRandomlySelected) instanceof Plant) {
+                    ((Plant) animalListInCell.get(hunterRandomlySelected)).eat();
                 }
             }
         }
     }
 
 
-    public void breed(Enviroment enviromentInformation) {
-       List<Animal> newBabyAnimals = new ArrayList<>();
-        for (int i = 0; i < enviromentInformation.getEnviromentRows() ; i++) {
-            for (int j = 0; j < enviromentInformation.getEnviromentColumns() ; j++) {
+    public void breed(int row, int col, List<Animal> animalListInCell, Enviroment enviromentInformation) {
+        System.out.println("Reproducing animal");
+       List<Animal> newBabyAnimalList = new ArrayList<>();
                // List<Animal> animalListInCell = Arrays.stream(enviromentInformation.getAnimalContainer()).findAny(getGender('M'))
-                List<Animal> animalListInCell = enviromentInformation.getAnimalContainer()[i][j];
+               // List<Animal> animalListInCell = animalList;
 
                          if(animalListInCell.size() > 1) {
                              Set<Animal> animalsAlreadySelected = new HashSet<>();
 
                              for (int k = 0; k <animalListInCell.size() ; k++) {
                                    Animal animal = animalListInCell.get(k);
+                                // System.out.println(animal.getGender());
                                  for (int l = k + 1; l <animalListInCell.size() ; l++) {
                                     Animal animal1 = animalListInCell.get(l);
+                                     //System.out.println(animal1.getGender());
 
                                      if (!animalsAlreadySelected.contains(animal) &&
                                          !animalsAlreadySelected.contains(animal1) &&
@@ -187,7 +201,9 @@ public abstract class Animal {
                                          animal.getClass().equals(animal1.getClass())){
 
                                         try {
-                                            Animal newBabyAnimals = animal.getClass().getDeclaredConstructor().newInstance();
+                                            Animal newBabyAnimal = animal.getClass().getDeclaredConstructor().newInstance();
+                                            newBabyAnimalList.add(newBabyAnimal);
+                                            System.out.println("New baby: "+ newBabyAnimal.getClass().getSimpleName());
                                             animalsAlreadySelected.add(animal);
                                             animalsAlreadySelected.add(animal1);
                                         } catch (Exception e){
@@ -198,23 +214,16 @@ public abstract class Animal {
 
                                  }
                              }
+                             if (!newBabyAnimalList.isEmpty()){
+                                 for (Animal babyAnimal : newBabyAnimalList){
+                                     enviromentInformation.getAnimalContainer()[row][col].add(babyAnimal);
+                                 }
+                             }
                         }
-                if(j > 0){
 
-                    for(Animal animal : newBabyAnimals){
-                        enviromentInformation.getAnimalContainer()[i][j-1].add(animal);
-                    }
-                }
             }
 
-        }
 
-
-    }
-
-
-    public void die() {
-    }
 
     public void verifyPossibilityOfBeEaten(Animal animalAsHunter, Animal animalAsPrey) {
         int[][] possibilityMatrix = {

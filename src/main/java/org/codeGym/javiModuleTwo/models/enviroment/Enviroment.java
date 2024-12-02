@@ -11,13 +11,13 @@ import org.codeGym.javiModuleTwo.services.Carnivore;
 import org.codeGym.javiModuleTwo.services.Herbivore;
 import org.codeGym.javiModuleTwo.services.Photosynthetic;
 
-import java.sql.Array;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class Enviroment {
-    private int enviromentRows = 5;
-    private int enviromentColumns = 3;
+    private int enviromentRows = 3;
+    private int enviromentColumns = 4;
     private final List<Animal>[][] animalContainer = new ArrayList[enviromentRows][enviromentColumns];
     private final List<Integer>[][] numberOfAnimalsByCell = new ArrayList[enviromentRows][enviromentColumns];
     private final List<Integer>[][] availableMovementsInEachCell = new ArrayList[enviromentRows][enviromentColumns];
@@ -28,17 +28,31 @@ public class Enviroment {
     private List<Animal> livingPlants = new ArrayList<>();
     private List<Animal> deadAnimals = new ArrayList<>();
 
-//Essential methods to set before starting the move, eat, reproduce actions.
+    //Essential methods to set before starting the move, eat, reproduce actions.
     public Enviroment() {
+        System.out.println("List of tasks required for the environment preparation.");
+
+        System.out.println("1. Set environment dimensions");
         prepareEnviromentArrays();
+
+        System.out.println("2. Determine randomly the number of animals by cell.");
         determineNumberOfAnimalsByCell();
-        determineAnimalsByCode();
-        identifyTypeOfAnimal();
+
+        System.out.println("3. Create and assign animals into each cell.");
+        createAnimalsByCode();
+
+        System.out.println("4. Determine randomly the possible movements of each animal based on the cell location.");
         determinePossibleMovements();
+
+        System.out.println("5. Display initial positions.");
         displayAnimalLocation();
 
+        //System.out.println("Initial environment information");
+        //displayEnvironmentInformation();
+
     }
-//EnviromentsRows get and set pending of being used until the Scanner is implemented
+
+    //EnviromentsRows get and set pending of being used until the Scanner is implemented
     public int getEnviromentRows() {
         return enviromentRows;
     }
@@ -73,7 +87,6 @@ public class Enviroment {
 
 
     public void prepareEnviromentArrays() {
-        System.out.println("1. Get environment ready.");
         for (int i = 0; i < enviromentRows; i++) {
             for (int j = 0; j < enviromentColumns; j++) {
                 animalContainer[i][j] = new ArrayList<>();
@@ -84,8 +97,7 @@ public class Enviroment {
     }
 
     public void determineNumberOfAnimalsByCell() {
-        System.out.println("2. Determine number of animals by cell.");
-        int limit = 4;
+        int limit = 3;
         Random random = new Random();
 
         for (List<Integer>[] lists : numberOfAnimalsByCell) {
@@ -103,8 +115,7 @@ public class Enviroment {
         }
     }
 
-    public void determineAnimalsByCode() {
-        System.out.println("3. Create and assign animals by cell.");
+    public void createAnimalsByCode() {
         Random random = new Random();
         int animalCode;
 
@@ -189,7 +200,7 @@ public class Enviroment {
     }
 
     public void determinePossibleMovements() {
-        System.out.println("4. Identify possible movements by cell.");
+
 
         for (int i = 0; i < enviromentRows; i++) {
             for (int j = 0; j < enviromentColumns; j++) {
@@ -210,7 +221,6 @@ public class Enviroment {
     }
 
     public void displayAnimalLocation() {
-        System.out.println("5. Display animals by cell.");
 
         for (int i = 0; i < enviromentRows; i++) {
             for (int j = 0; j < enviromentColumns; j++) {
@@ -226,6 +236,28 @@ public class Enviroment {
                 System.out.printf(" | C-[%d][%d]: %s ", i, j, animalContainerRepresentation[i][j]);
             }
             System.out.println();
+        }
+    }
+
+    public void displayEnvironmentInformation() {
+        System.out.println("Identify type of animals");
+
+        for (int i = 0; i < enviromentRows; i++) {
+            // System.out.println("Row: " + i);
+            for (int j = 0; j < enviromentColumns; j++) {
+                //System.out.printf("Cell-[%d][%d]", i, j);
+                for (Animal animal : animalContainer[i][j]) {
+                    if (animal.isAlive && animal instanceof Carnivore) {
+                        livingCarnivores.add(animal);
+                    } else if (animal.isAlive && animal instanceof Herbivore) {
+                        livingHerbivores.add(animal);
+                    } else if (animal.isAlive && animal instanceof Photosynthetic) {
+                        livingPlants.add(animal);
+                    } else {
+                        deadAnimals.add(animal);
+                    }
+                }
+            }
         }
     }
 
@@ -246,7 +278,7 @@ public class Enviroment {
                     final int radomMovement = movementsList.get(random.nextInt(movementsList.size()));
 
                     moveThreadPool.submit(() -> {
-                        synchronized (enviromentInformation.getAnimalContainer()) {
+                        synchronized (animalContainer[row][col]) {
                             animal.move(row, col, radomMovement, enviromentInformation);
                         }
                     });
@@ -270,80 +302,110 @@ public class Enviroment {
         ExecutorService eatThreadPool = Executors.newFixedThreadPool(enviromentRows * enviromentColumns);
 
         for (int i = 0; i < enviromentRows; i++) {
-            System.out.println("Row: " + i);
+            //System.out.println("Row: " + i);
             for (int j = 0; j < enviromentColumns; j++) {
                 List<Animal> animalList = new ArrayList<>(animalContainer[i][j]);
-                System.out.printf("Animals in cell [%d][%d] ready to eat: \n", i, j);
-                for (Animal animal : animalList) {
-                    System.out.printf("%s\t", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()));
-                }
-                System.out.println();
 
-                for (Animal animal : animalList) {
-
-                    if (animalContainer[i][j].size() > 1) {
+                if (animalList.size() > 1) {
+                    int row = i;
+                    int col = j;
+                    for (Animal animal : animalList) {
                         eatThreadPool.submit(() -> {
-                            synchronized (enviromentInformation.getAnimalContainer()) {
+                            /** System.out.printf("Thread ID %d (%s) is executing eat logic for animal %s in cell [%d][%d]%n",
+                             Thread.currentThread().getId(),
+                             Thread.currentThread().getName(),
+                             animal.getClass().getSimpleName(),
+                             row, col);*/
+                            synchronized (animalContainer[row][col]) {
                                 animal.eat(animalList, enviromentInformation);
                             }
                         });
-                    } else {
-                        System.out.printf("The %s is alone, there is nothing to eat in cell [%d][%d]", AvailableAnimals.getAvatarByAnimalName(animalContainer[i][j].getClass().getSimpleName()), i, j);
+                    }
+                } else {
+                    for (Animal animal : animalList) {
+                        animal.setAnimalMemory("Eat:", "The animal is alone there is nothing to eat");
                     }
                 }
             }
         }
         eatThreadPool.shutdown();
-        try {
-            if (!eatThreadPool.awaitTermination(60, TimeUnit.SECONDS)) {
-                System.err.println("Eat tasks did not complete in time.");
-                eatThreadPool.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            System.err.println("Thread pool interrupted: " + e.getMessage());
-        }
-        System.out.println("Eat logic completed.");
-    }
-
-    public void displayAnimalHistory() {
-        System.out.println("Animal history");
-
-        for (int i = 0; i < enviromentRows; i++) {
-            System.out.println("Row: " + i);
-            for (int j = 0; j < enviromentColumns; j++) {
-                System.out.printf("Cell-[%d][%d]\n", i, j);
-                for (Animal animal : animalContainer[i][j]) {
-                    System.out.printf(animal.getAnimalMemory());
-
+                try {
+                    if (!eatThreadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                        System.err.println("Eat tasks did not complete in time.");
+                        eatThreadPool.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    System.err.println("Thread pool interrupted: " + e.getMessage());
                 }
+                System.out.println("Eat logic completed.");
             }
-        }
-    }
 
 
-    public void identifyTypeOfAnimal() {
-        System.out.println("Identify type of animals");
 
-        for (int i = 0; i < enviromentRows; i++) {
-            // System.out.println("Row: " + i);
-            for (int j = 0; j < enviromentColumns; j++) {
-                //System.out.printf("Cell-[%d][%d]", i, j);
-                for (Animal animal : animalContainer[i][j]) {
-                    if (animal.isAlive && animal instanceof Carnivore) {
-                        livingCarnivores.add(animal);
-                    } else if (animal.isAlive && animal instanceof Herbivore) {
-                        livingHerbivores.add(animal);
-                    } else if (animal.isAlive && animal instanceof Photosynthetic) {
-                        livingPlants.add(animal);
-                    } else {
-                        deadAnimals.add(animal);
+            public void breedAnimal (Enviroment enviromentInformation){
+                System.out.println("Ready to breed");
+                ExecutorService breedThreadPool = Executors.newFixedThreadPool(enviromentRows * enviromentColumns);
+
+                for (int i = 0; i < enviromentRows; i++) {
+                    System.out.println("Row: " + i);
+                    for (int j = 0; j < enviromentColumns; j++) {
+                        List<Animal> animalList = new ArrayList<>(getAnimalContainer()[i][j]);
+                        System.out.printf("Animals in cell [%d][%d] are looking for a partner to breed: \n", i, j);
+                        for (Animal animal : animalList) {
+                            System.out.printf("%s\t", AvailableAnimals.getAvatarByAnimalName(animal.getClass().getSimpleName()));
+                        }
+                        System.out.println();
+
+                        for (Animal animal : animalList) {
+                            final int row = i;
+                            final int col = j;
+
+                            if (animalContainer[i][j].size() > 1) {
+                                breedThreadPool.submit(() -> {
+                                    synchronized (getAnimalContainer()) {
+                                        animal.breed(row, col, animalList, enviromentInformation);
+                                    }
+                                });
+                            } else {
+                                System.out.printf("The %s is alone, there is nothing to breed in cell [%d][%d]", AvailableAnimals.getAvatarByAnimalName(animalContainer[i][j].getClass().getSimpleName()), i, j);
+                            }
+                        }
+                    }
+                }
+                breedThreadPool.shutdown();
+                try {
+                    if (!breedThreadPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                        System.err.println("Breed tasks did not complete in time.");
+                        breedThreadPool.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    System.err.println("Thread pool interrupted: " + e.getMessage());
+                }
+                System.out.println("Breed logic completed.");
+            }
+
+            public void displayAnimalHistory () {
+                System.out.println("****RECORD OF ACTIONS FOR EACH ANIMAL****\n");
+                //.out.println("This is a record of all the actions performed by the animals during the execution.");
+
+                for (int i = 0; i < enviromentRows; i++) {
+                    System.out.println("Row: " + i);
+                    for (int j = 0; j < enviromentColumns; j++) {
+                        System.out.printf("Summary [%d][%d] - %s\n", i, j, animalContainerRepresentation[i][j]);
+                        for (Animal animalList : animalContainer[i][j]) {
+                            //System.out.println(AvailableAnimals.getAvatarByAnimalName(animalList.getClass().getSimpleName()));
+                            //Map<String, String> sortedMap = new TreeMap<>(animalList.getAnimalMemory());
+                            System.out.print(animalList.getAnimalMemory().entrySet().stream()
+                                    .map(memory -> memory.getKey() + " " + memory.getValue()).sorted()
+                                    .collect(Collectors.joining(", ", "[", "]")));
+                            System.out.println();
+
+                        }
                     }
                 }
             }
+
+
         }
-    }
-
-
-}
 
 
