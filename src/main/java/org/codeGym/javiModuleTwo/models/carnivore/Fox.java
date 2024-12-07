@@ -2,7 +2,6 @@ package org.codeGym.javiModuleTwo.models.carnivore;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
 import java.util.List;
@@ -15,19 +14,10 @@ public class Fox extends Animal implements Carnivore{
         this.setAnimalMemory("Type:", getTypeOfAnimal());
     }
 
-    public void eat(List<Animal> animalList) {
-        System.out.println("El zorro va a comer");
-    }
-
-    public void breed() {
-
-    }
+public String cleanNewBaby(){
+        return "The Fox clean and keep close the new baby.";
+}
 
 
 
-
-    @Override
-    public boolean hunt(List<Animal> preyList) {
-        return false;
-    }
 }

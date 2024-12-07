@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface Carnivore {
 
-    boolean hunt(List<Animal> preyList);
+
 }

@@ -3,7 +3,6 @@ package org.codeGym.javiModuleTwo.models.carnivore;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
 import java.util.List;
@@ -17,18 +16,9 @@ public class Bear extends Animal implements Carnivore {
     }
 
 
-    public void eat(List<Animal> animalList) {
-        System.out.println("El oso va a comer");
+
+    public String breedNewBaby(){
+        return "The Bear breeds the new baby jealously.";
     }
 
-    public void breed() {
-
-    }
-
-
-
-    @Override
-    public boolean hunt(List<Animal> preyList) {
-        return false;
-    }
 }

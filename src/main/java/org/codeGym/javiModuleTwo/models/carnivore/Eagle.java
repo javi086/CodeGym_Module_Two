@@ -2,7 +2,6 @@ package org.codeGym.javiModuleTwo.models.carnivore;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
 import java.util.List;
@@ -19,15 +18,8 @@ public class Eagle extends Animal implements  Carnivore{
     }
 
 
-
-    public void breed() {
-
+    public String trill(){
+        return "The Eagle trills because of the new baby.";
     }
 
-
-
-    @Override
-    public boolean hunt(List<Animal> preyList) {
-        return false;
-    }
 }
