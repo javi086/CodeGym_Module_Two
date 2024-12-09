@@ -11,21 +11,15 @@ public class Mouse extends Animal implements Herbivore {
     public Mouse(){
         this.setTypeOfAnimal("Herbivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
-    public void eat(List<Animal> animalList) {
-
+    public String nurseTheBaby(){
+        return "The Mouse nurse the new baby for 21 days.";
     }
-
-    public void breed() {
-
-    }
-
-
 
     @Override
-    public void pasture() {
-
+    public String pasture() {
+        return "I'm pasturing.";
     }
 }

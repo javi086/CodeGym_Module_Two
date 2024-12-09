@@ -11,21 +11,15 @@ public class Goat extends Animal implements Herbivore {
     public Goat(){
         this.setTypeOfAnimal("Herbivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
-    public void eat(List<Animal> animalList) {
-
-    }
-
-    public void breed() {
-
-    }
-
-
+  public String eatThePlacenta(){
+        return "The Goat is eating her placenta";
+  }
 
     @Override
-    public void pasture() {
-
+    public String pasture() {
+        return "I'm pasturing.";
     }
 }

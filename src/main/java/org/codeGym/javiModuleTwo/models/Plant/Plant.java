@@ -10,20 +10,20 @@ public class Plant  extends Animal implements Photosynthetic {
     public Plant(){
         this.setTypeOfAnimal("Photosynthetic");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
     public void eat(){
         this.setAnimalMemory("Eat:", "The plant is feeding from the ground");
     }
 
-    public void breed() {
-        System.out.println("The plant spreads its spores to reproduce");
+    public String breed() {
+        return "The plant spreads its spores to another plant to reproduce";
     }
 
 
     @Override
-    public void performPhotosynthesis() {
-        System.out.println("The plant is happy and implementing photosynthesis");
+    public String performPhotosynthesis() {
+        return "The plant is happy and implementing photosynthesis";
     }
 }

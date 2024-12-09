@@ -11,20 +11,16 @@ public class Buffalo extends Animal implements Herbivore {
     public Buffalo(){
         this.setTypeOfAnimal("Herbivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
-    public void eat(List<Animal> animalList) {
-
-    }
-    public void breed() {
-
-    }
-
-
+   public String lickTheBaby() {
+        return "The Buffalo is licking the new baby.";
+   }
 
     @Override
-    public void pasture() {
-
+    public String pasture() {
+        return "I'm pasturing.";
     }
+
 }

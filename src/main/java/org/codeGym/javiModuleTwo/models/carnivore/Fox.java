@@ -11,13 +11,16 @@ public class Fox extends Animal implements Carnivore{
     public Fox(){
         this.setTypeOfAnimal("Carnivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
 public String cleanNewBaby(){
         return "The Fox clean and keep close the new baby.";
 }
 
-
+    @Override
+    public String sniff() {
+        return "I'm sniffing looking for a possible prey.";
+    }
 
 }

@@ -11,21 +11,16 @@ public class Horse extends Animal implements Herbivore {
     public Horse(){
         this.setTypeOfAnimal("Herbivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
-    public void eat(List<Animal> animalList) {
-
+    public String lickTheBaby(){
+        return "The Horse licks the new baby.";
     }
-
-    public void breed() {
-
-    }
-
 
 
     @Override
-    public void pasture() {
-
+    public String pasture() {
+        return "I'm pasturing.";
     }
 }

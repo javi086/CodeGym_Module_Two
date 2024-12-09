@@ -11,19 +11,15 @@ public class Deer extends Animal implements Herbivore {
     public Deer(){
         this.setTypeOfAnimal("Herbivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
-    }
-    public void eat(List<Animal> animalList) {
-
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
-    public void breed() {
-
+    public String lickTheBaby() {
+        return "The Deer is licking the new baby.";
     }
-
 
     @Override
-    public void pasture() {
-
+    public String pasture() {
+        return "I'm pasturing.";
     }
 }

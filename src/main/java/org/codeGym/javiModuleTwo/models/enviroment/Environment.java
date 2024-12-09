@@ -7,6 +7,9 @@ import org.codeGym.javiModuleTwo.models.Animal;
 import org.codeGym.javiModuleTwo.models.Plant.Plant;
 import org.codeGym.javiModuleTwo.models.carnivore.*;
 import org.codeGym.javiModuleTwo.models.herbivore.*;
+import org.codeGym.javiModuleTwo.services.Carnivore;
+import org.codeGym.javiModuleTwo.services.Herbivore;
+import org.codeGym.javiModuleTwo.services.Photosynthetic;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -15,6 +18,7 @@ import java.util.stream.Collectors;
 public class Environment {
     private final int environmentRows;
     private final int environmentColumns;
+    private final int numberOfAnimalsPerCell;
     private List<Animal>[][] animalContainer;
     private List<Integer>[][] numberOfAnimalsByCell;
     private List<Integer>[][] availableMovementsInEachCell;
@@ -26,39 +30,27 @@ public class Environment {
     private List<Animal> deadAnimals = new ArrayList<>();
 
     //Essential methods to set before starting the move, eat, reproduce actions.
-    public Environment(int environmentRows, int environmentColumns) {
+    public Environment(int environmentRows, int environmentColumns, int AnimalsPerCell) {
         this.environmentRows = environmentRows;
         this.environmentColumns = environmentColumns;
-        System.out.println("List of tasks required for the environment preparation.");
+        this.numberOfAnimalsPerCell = AnimalsPerCell;
+    }
 
-        System.out.println("1. Prepare arrays required");
+    public void prepareEnvironment() {
+        System.out.printf("******List of tasks required for the environment preparation:*******%n"
+                + "1. Prepare arrays required.%n"
+                + "2. Determine randomly the number of animals by cell.%n"
+                + "3. Create and assign animals into each cell.%n"
+                + "4. Determine randomly the possible movements of each animal based on the cell location.%n"
+                + "5. Display initial positions.%n");
         prepareEnvironmentArrays();
-
-        System.out.println("2. Determine randomly the number of animals by cell.");
         determineNumberOfAnimalsByCell();
-
-        System.out.println("3. Create and assign animals into each cell.");
         createAnimalsByCode();
-
-        System.out.println("4. Determine randomly the possible movements of each animal based on the cell location.");
         determinePossibleMovements();
-
-        System.out.println("5. Display initial positions.");
         displayAnimalLocation();
     }
 
-    //EnvironmentsRows get and set pending of being used until the Scanner is implemented
-    public int getEnvironmentRows() {
-        return environmentRows;
-    }
-
-    public int getEnvironmentColumns() {
-        return environmentColumns;
-    }
-
-
     public List<Animal> getDeadAnimals() {
-
         return deadAnimals;
     }
 
@@ -67,6 +59,7 @@ public class Environment {
     }
 
     public List<Integer>[][] getAvailableMovementsInEachCell() {
+
         return this.availableMovementsInEachCell;
     }
 
@@ -91,12 +84,12 @@ public class Environment {
     }
 
     public void determineNumberOfAnimalsByCell() {
-        int limit = 3;
+
         Random random = new Random();
 
         for (List<Integer>[] lists : numberOfAnimalsByCell) {
             for (int i = 0; i < lists.length; i++) {
-                lists[i].add(random.nextInt(limit) + 1);
+                lists[i].add(random.nextInt(numberOfAnimalsPerCell) + 1);
             }
         }
         for (int i = 0; i < environmentRows; i++) {
@@ -279,27 +272,38 @@ public class Environment {
         System.out.println("Move logic completed successfully.");
     }
 
+
     public void eatAnotherAnimal(Environment environmentInformation) {
         System.out.println("Eat logic initiated");
         ExecutorService eatThreadPool = Executors.newFixedThreadPool(environmentRows * environmentColumns);
+        Plant plant = new Plant();
+
 
         for (int i = 0; i < environmentRows; i++) {
             for (int j = 0; j < environmentColumns; j++) {
+                animalContainer[0][0].clear();
+                animalContainer[0][0].add(plant);
                 List<Animal> animalList = new ArrayList<>(animalContainer[i][j]);
-
                 if (animalList.size() > 1) {
                     int row = i;
                     int col = j;
                     for (Animal animal : animalList) {
                         eatThreadPool.submit(() -> {
                             synchronized (animalContainer[row][col]) {
-                                animal.eat(animalList, environmentInformation);
+                                animal.eat(animalList, environmentInformation, row, col);
                             }
                         });
                     }
                 } else {
                     for (Animal animal : animalList) {
-                        animal.setAnimalMemory("Eat:", "The animal is alone there is nothing to eat");
+                        if(animal instanceof Herbivore){
+                            animal.setAnimalMemory("Eat:", "I'm alone and "+((Herbivore) animal).pasture());
+                        } else if (animal instanceof Carnivore) {
+                            animal.setAnimalMemory("Eat:", "I'm alone and " +((Carnivore) animal).sniff());
+                        }else{
+                            animal.setAnimalMemory("Eat:", "I'm alone and " +((Photosynthetic) animal).performPhotosynthesis());
+                        }
+
                     }
                 }
             }
@@ -336,32 +340,31 @@ public class Environment {
                 int col = j;
 
                 breedThreadPool.submit(() -> {
-                   /* animalContainer[2][1].clear();
-                    animalContainer[2][1].add(fox);
-                    animalContainer[2][1].add(deer);
-                    animalContainer[2][1].add(plant);
-                    animalContainer[2][1].add(caterpillar);
-                    animalContainer[2][1].add(eagle);
-                    animalContainer[2][1].add(eagle2);
-                    animalContainer[2][1].add(rabbit);*/
+//                   animalContainer[2][1].clear();
+//                    animalContainer[2][1].add(fox);
+//                    animalContainer[2][1].add(deer);
+//                    animalContainer[2][1].add(plant);
+//                    animalContainer[2][1].add(caterpillar);
+//                    animalContainer[2][1].add(eagle);
+//                    animalContainer[2][1].add(eagle2);
+//                   animalContainer[2][1].add(rabbit);
                     List<Animal> possibleAnimalPartnerList = new ArrayList<>(getAnimalContainer()[row][col]);
-                    List<Animal> animalsToBreed = new ArrayList<>();
+                    List<Animal> femaleAnimalList = new ArrayList<>();
 
                     if (possibleAnimalPartnerList.size() > 1) {
                         for (Animal animalLookingForPartner : possibleAnimalPartnerList) {
                             if (!animalLookingForPartner.isWithCouple()) {
-                                System.out.printf("Row: %d, Col: %d\n", row, col);
-                                System.out.printf("Looking for partners for animal %s and couple match %s sex: %s %n",
-                                        animalLookingForPartner.getClass().getSimpleName(), animalLookingForPartner.isWithCouple(), animalLookingForPartner.getGender());
-                                System.out.printf("Animals to breed before loop: %s from the cell[%s][%s]%n", animalsToBreed, row, col);
-                                animalsToBreed = animalLookingForPartner.lookingForPartner(animalLookingForPartner, possibleAnimalPartnerList);
+                               //System.out.printf("Row: %d, Col: %d\n", row, col);
+                               //System.out.printf("Looking for partners for animal %s and couple match %s sex: %s %n", animalLookingForPartner.getClass().getSimpleName(), animalLookingForPartner.isWithCouple(), animalLookingForPartner.getGender());
+                               //System.out.printf("Animals to breed before loop: %s from the cell[%s][%s]%n", femaleAnimalList, row, col);
+                                //femaleAnimalList = animalLookingForPartner.lookForPartner(animalLookingForPartner, possibleAnimalPartnerList);
                             }
 
                         }
 
                         synchronized (animalContainer[row][col]) {
-                            for (Animal animal : animalsToBreed) {
-                                animal.breed(animal, row, col, environmentInformation);
+                            for (Animal animal : femaleAnimalList) {
+                               animal.breed(animal, row, col, environmentInformation);
                             }
                         }
                     } else {

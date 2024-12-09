@@ -10,15 +10,15 @@ public class Boa extends Animal implements Carnivore {
     public Boa(){
         this.setTypeOfAnimal("Carnivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
-    }
-
-    public void breed() {
-
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
     public String hideAndLeave(){
         return "The Boa, hide the new baby and leave.";
     }
 
+    @Override
+    public String sniff() {
+        return "I'm sniffing looking for a possible prey.";
+    }
 }

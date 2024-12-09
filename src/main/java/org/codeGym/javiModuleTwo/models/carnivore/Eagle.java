@@ -11,15 +11,15 @@ public class Eagle extends Animal implements  Carnivore{
     public Eagle(){
         this.setTypeOfAnimal("Carnivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
-    }
-    public void eat(List<Animal> animalList) {
-        System.out.println("La aguila va a comer");
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
-
-    public String trill(){
+    public String trill(){ //Silbar
         return "The Eagle trills because of the new baby.";
     }
 
+    @Override
+    public String sniff() {
+        return "I'm sniffing looking for a possible prey.";
+    }
 }

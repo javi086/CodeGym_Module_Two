@@ -12,13 +12,15 @@ public class Bear extends Animal implements Carnivore {
     public Bear(){
         this.setTypeOfAnimal("Carnivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
-
-
 
     public String breedNewBaby(){
         return "The Bear breeds the new baby jealously.";
     }
 
+    @Override
+    public String sniff() {
+        return "I'm sniffing looking for a possible prey.";
+    }
 }

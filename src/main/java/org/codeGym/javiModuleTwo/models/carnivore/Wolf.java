@@ -12,21 +12,16 @@ public class Wolf extends Animal implements Carnivore {
     public Wolf(){
         this.setTypeOfAnimal("Carnivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
-
-//    @Override
-//    public List<Animal> lookingForPartner(Animal animalLookingForPartner, List<Animal> possibleAnimalPartnerList) {
-//       List<Animal> animalsToBreed = new ArrayList<>();
-//        howl();
-//        animalsToBreed = super.lookingForPartner(animalLookingForPartner, possibleAnimalPartnerList);
-//        return animalsToBreed;
-//    }
 
     public String howl() {
         return "The Wolf is happy and howls because of the new baby.";
     }
 
-
+    @Override
+    public String sniff() {
+        return "I'm sniffing looking for a possible prey.";
+    }
 
 }

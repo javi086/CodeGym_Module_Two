@@ -12,23 +12,16 @@ public class Boar extends Animal implements Herbivore {
     public Boar(){
         this.setTypeOfAnimal("Herbivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
-    public void eat(List<Animal> animalList) {
-
-    }
-
-
-
-    public void breed() {
-
-    }
-
+public String leaveAfterBreed(){
+        return "The boar left and doesn't take care of the new baby.";
+}
 
 
     @Override
-    public void pasture() {
-
+    public String pasture() {
+        return "I'm pasturing.";
     }
 }

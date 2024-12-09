@@ -11,24 +11,17 @@ public class Caterpillar extends Animal implements Herbivore {
     public Caterpillar(){
         this.setTypeOfAnimal("Herbivore");
         this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
-        this.setAnimalMemory("Type:", getTypeOfAnimal());
-    }
-
-    public void eat(List<Animal> animalList) {
-
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
 
-
-
-    public void breed() {
-
+    public String eatEmptyEggs(){
+        return "The Caterpillar eats empty eggs";
     }
-
-
 
     @Override
-    public void pasture() {
-
+    public String pasture() {
+        return "I'm pasturing.";
     }
+
 }
