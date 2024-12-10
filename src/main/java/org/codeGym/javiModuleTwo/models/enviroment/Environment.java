@@ -324,51 +324,36 @@ public class Environment {
     public void breedAnimal(Environment environmentInformation) {
         System.out.println("Breed logic initiated.");
         ExecutorService breedThreadPool = Executors.newFixedThreadPool(environmentRows * environmentColumns);
-        Fox fox = new Fox();
-        Deer deer = new Deer();
-        Plant plant = new Plant();
-        Caterpillar caterpillar = new Caterpillar();
-        Eagle eagle = new Eagle();
-        eagle.setGender("M");
-        Eagle eagle2 = new Eagle();
-        eagle2.setGender("F");
-        Rabbit rabbit = new Rabbit();
+
 
         for (int i = 0; i < environmentRows; i++) {
             for (int j = 0; j < environmentColumns; j++) {
                 int row = i;
                 int col = j;
+                    List<Animal> animalsAliveLookingForPartner = new ArrayList<>(getAnimalContainer()[row][col].stream().
+                            filter(Animal::isAlive).collect(Collectors.toList()));
 
                 breedThreadPool.submit(() -> {
-//                   animalContainer[2][1].clear();
-//                    animalContainer[2][1].add(fox);
-//                    animalContainer[2][1].add(deer);
-//                    animalContainer[2][1].add(plant);
-//                    animalContainer[2][1].add(caterpillar);
-//                    animalContainer[2][1].add(eagle);
-//                    animalContainer[2][1].add(eagle2);
-//                   animalContainer[2][1].add(rabbit);
-                    List<Animal> possibleAnimalPartnerList = new ArrayList<>(getAnimalContainer()[row][col]);
-                    List<Animal> femaleAnimalList = new ArrayList<>();
 
-                    if (possibleAnimalPartnerList.size() > 1) {
-                        for (Animal animalLookingForPartner : possibleAnimalPartnerList) {
+                    if (animalsAliveLookingForPartner.size() > 1) {
+                        List<Animal> femaleAnimalList = new ArrayList<>();
+                        for (Animal animalLookingForPartner : animalsAliveLookingForPartner) {
                             if (!animalLookingForPartner.isWithCouple()) {
                                //System.out.printf("Row: %d, Col: %d\n", row, col);
                                //System.out.printf("Looking for partners for animal %s and couple match %s sex: %s %n", animalLookingForPartner.getClass().getSimpleName(), animalLookingForPartner.isWithCouple(), animalLookingForPartner.getGender());
                                //System.out.printf("Animals to breed before loop: %s from the cell[%s][%s]%n", femaleAnimalList, row, col);
-                                //femaleAnimalList = animalLookingForPartner.lookForPartner(animalLookingForPartner, possibleAnimalPartnerList);
+                                animalLookingForPartner.lookForPartner(animalLookingForPartner, animalsAliveLookingForPartner).ifPresent(femaleAnimalList::add);
                             }
-
                         }
-
                         synchronized (animalContainer[row][col]) {
-                            for (Animal animal : femaleAnimalList) {
-                               animal.breed(animal, row, col, environmentInformation);
+                            if (!femaleAnimalList.isEmpty()){
+                                for (Animal animal : femaleAnimalList) {
+                                    animal.breed(animal, row, col, environmentInformation);
+                                }
                             }
                         }
                     } else {
-                        possibleAnimalPartnerList.get(0).setAnimalMemory("Breed:", "I'm alone there is no one to breed here 😨");
+                        animalsAliveLookingForPartner.get(0).setAnimalMemory("Breed:", "I'm alone there is no one to breed here 😨");
                     }
                 });
             }

@@ -200,40 +200,30 @@ public abstract class Animal {
         }
     }
 
-    public List<Animal> lookForPartner(Animal animalLookingForPartner, List<Animal> possibleAnimalPartnerList) {
-        Set<Animal> animalHasFoundAMatch = new HashSet<>();
-        List<Animal> animalsToBreed = new ArrayList<>();
-
+    public Optional<Animal> lookForPartner(Animal animalLookingForPartner, List<Animal> possibleAnimalPartnerList) {
 
         for (Animal possibleAnimalPartner : possibleAnimalPartnerList) {
+            if (animalLookingForPartner.equals(possibleAnimalPartner)){
+                continue;
+            }
             if (animalLookingForPartner.getClass().getSimpleName().equals(possibleAnimalPartner.getClass().getSimpleName()) &&
-                !animalLookingForPartner.getGender().equals(possibleAnimalPartner.getGender())) {
+                 !animalLookingForPartner.getGender().equals(possibleAnimalPartner.getGender()) &&
+                !possibleAnimalPartner.isWithCouple){
+
                 animalLookingForPartner.setWithCouple(true);
+                animalLookingForPartner.setAnimalMemory("Breed:", "Yes, I found a partner to breed");
                 possibleAnimalPartner.setWithCouple(true);
-                //animalHasFoundAMatch.add(animalLookingForPartner);
-                //animalHasFoundAMatch.add(possibleAnimalPartner);
-                if (animalLookingForPartner.getGender().equals("F")) {
-                    System.out.printf("Female: %s ", animalLookingForPartner);
-                    animalsToBreed.add(animalLookingForPartner);//Female
-                    //possibleAnimalPartner.setAnimalMemory("Breed:", "Yes, I found a partner to breed A " + animalLookingForPartner + animalLookingForPartner.getGender() + possibleAnimalPartner + possibleAnimalPartner.getGender());
-                    possibleAnimalPartner.setAnimalMemory("Breed:", "Yes, I found a partner to breed");
-                } else {
-                    System.out.printf("Male: %s ", animalLookingForPartner);
-                    animalsToBreed.add(possibleAnimalPartner);//Female
-                    //animalLookingForPartner.setAnimalMemory("Breed:", "Yes, I found a partner to breed B " + animalLookingForPartner + animalLookingForPartner.getGender() + possibleAnimalPartner + possibleAnimalPartner.getGender());
-                    animalLookingForPartner.setAnimalMemory("Breed:", "Yes, I found a partner to breed");
-                }
-            } else {
-                //animalLookingForPartner.setAnimalMemory("Breed:", "No, I couldn't find a partner to breed 😭 C " + animalLookingForPartner + animalLookingForPartner.getGender() + possibleAnimalPartner);
+                possibleAnimalPartner.setAnimalMemory("Breed:", "Yes, I found a partner to breed");
+                return Optional.of(animalLookingForPartner.getGender().equals("F") ? animalLookingForPartner : possibleAnimalPartner);
+            }else {
                 animalLookingForPartner.setAnimalMemory("Breed:", "No, I couldn't find a partner to breed 😭");
             }
         }
 
-        return animalsToBreed;
+        return  Optional.empty();
     }
 
     public void breed(Animal animal, int row, int col, Environment environmentInformation) {
-        System.out.println("Logic of reproduction");
         List<Animal> newBabyAnimalList = new ArrayList<>();
 
         try {
@@ -242,7 +232,7 @@ public abstract class Animal {
             newBabyAnimalList.add(babyAnimal);
             animal.setAnimalMemory("Breed:", "Yes, I gave birth to a baby " + AvailableAnimals.getAvatarByAnimalName(babyAnimal.getClass().getSimpleName()));
             AdditionalBreedBehaviour(animal);
-            System.out.printf("Breeding successful: The %s created a new baby %s%n", animal.getClass().getSimpleName(),babyAnimal.getClass().getSimpleName());
+            System.out.printf("Breeding successful: The %s created a new baby %s in cell [%d][%d]%n", animal.getClass().getSimpleName(),babyAnimal.getClass().getSimpleName(), row, col);
         } catch (Exception e) {
             System.err.printf("Error creating new baby animal instance: %s%n", e.getMessage());
         }
@@ -250,7 +240,7 @@ public abstract class Animal {
         //Adding new babies to the current cell
         if (!newBabyAnimalList.isEmpty()) {
             environmentInformation.getAnimalContainer()[row][col].addAll(newBabyAnimalList);
-            System.out.printf("%d new animals added to cell [%d][%d]%n", newBabyAnimalList.size(), row, col);
+            //System.out.printf("%d new animals added to cell [%d][%d]%n", newBabyAnimalList.size(), row, col);
         }
     }
 

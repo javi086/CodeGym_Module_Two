@@ -40,12 +40,12 @@ public class Main {
                     try {
                         Environment finalEnvironment = environment;
                         Future<?> movenmentFuture = executorService.submit(() -> finalEnvironment.moveAnimal(finalEnvironment));
-                        //Future<?> eatFuture = executorService.submit(() -> finalEnvironment.eatAnotherAnimal(finalEnvironment));
-                        //Future<?> breedFuture = executorService.submit(() -> finalEnvironment.breedAnimal(finalEnvironment));
+                        Future<?> eatFuture = executorService.submit(() -> finalEnvironment.eatAnotherAnimal(finalEnvironment));
+                        Future<?> breedFuture = executorService.submit(() -> finalEnvironment.breedAnimal(finalEnvironment));
 
                         movenmentFuture.get();
-                        //eatFuture.get();
-                        //breedFuture.get();
+                        eatFuture.get();
+                        breedFuture.get();
 
                         environment.displayAnimalLocation();
                         environment.displayAnimalHistory();
