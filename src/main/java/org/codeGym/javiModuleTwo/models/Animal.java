@@ -130,16 +130,6 @@ public abstract class Animal {
 
     }
 
-    public void behaviourBeforeEat(List<Animal> animalList) {
-        for (Animal animal : animalList) {
-            if (animal instanceof Herbivore) {
-                animal.setAnimalMemory("BeforeEat:", ((Herbivore) animal).pasture());
-            } else {
-                animal.setAnimalMemory("BeforeEat:", ((Carnivore) animal).sniff());
-            }
-
-        }
-    }
 
     public void eat(List<Animal> animalListInCell, Environment environmentInformation, int row, int col) {
         Random random = new Random();
@@ -154,10 +144,10 @@ public abstract class Animal {
             possibilityOfBeEaten.clear();
             int hunterRandomlySelected = random.nextInt(animalListInCell.size());
             Animal hunter = animalListInCell.get(hunterRandomlySelected);
-            if (animalsChoosenRandomlyOrEatenAsAPrey.add(hunterRandomlySelected) && hunter.isHungry()) {
+            if (animalsChoosenRandomlyOrEatenAsAPrey.add(hunterRandomlySelected) && hunter.isHungry() && hunter.isAlive) {
                 //Verify possibility of be eaten for each animal
                 for (Animal prey : animalListInCell) {
-                    if (!prey.equals(hunter)) {
+                    if (!prey.equals(hunter) && prey.isAlive) {
                         verifyPossibilityOfBeEaten(hunter, prey);
                         possibilityOfBeEaten.put(prey, prey.getPossibilityOfBeingEaten());
                     }
@@ -182,7 +172,6 @@ public abstract class Animal {
 
                         //prey information
                         mostLikekyAnimalOfBeEaten.setAlive(false);
-                        environmentInformation.setDeadAnimals(mostLikekyAnimalOfBeEaten);
                         memoryMessageFormatted = String.format(preyMemoryMessage,
                                 AvailableAnimals.getAvatarByAnimalName(mostLikekyAnimalOfBeEaten.getClass().getSimpleName()),
                                 mostLikekyAnimalOfBeEaten.getClass().getSimpleName(),
@@ -232,7 +221,7 @@ public abstract class Animal {
             newBabyAnimalList.add(babyAnimal);
             animal.setAnimalMemory("Breed:", "Yes, I gave birth to a baby " + AvailableAnimals.getAvatarByAnimalName(babyAnimal.getClass().getSimpleName()));
             AdditionalBreedBehaviour(animal);
-            System.out.printf("Breeding successful: The %s created a new baby %s in cell [%d][%d]%n", animal.getClass().getSimpleName(),babyAnimal.getClass().getSimpleName(), row, col);
+            //System.out.printf("Breeding successful: The %s created a new baby %s in cell [%d][%d]%n", animal.getClass().getSimpleName(),babyAnimal.getClass().getSimpleName(), row, col);
         } catch (Exception e) {
             System.err.printf("Error creating new baby animal instance: %s%n", e.getMessage());
         }
@@ -248,11 +237,11 @@ public abstract class Animal {
         switch (animal.getClass().getSimpleName()) {
             case "Bear":
                 Bear bear = (Bear) animal;
-                bear.setAnimalMemory("AdditionalBehaviour:", bear.breedNewBaby());
+                bear.setAnimalMemory("AnimalAdditionalBehaviour:", bear.breedNewBaby());
                 break;
             case "Boa":
                 Boa boa = (Boa) animal;
-                boa.setAnimalMemory("AdditionalBehaviour:", boa.hideAndLeave());
+                boa.setAnimalMemory("AnimalAdditionalBehaviour:", boa.hideAndLeave());
                 break;
             case "Eagle":
                 Eagle eagle = (Eagle) animal;
@@ -260,58 +249,58 @@ public abstract class Animal {
                 break;
             case "Fox":
                 Fox fox = (Fox) animal;
-                fox.setAnimalMemory("AdditionalBehaviour:", fox.cleanNewBaby());
+                fox.setAnimalMemory("AnimalAdditionalBehaviour:", fox.cleanNewBaby());
                 break;
             case "Wolf":
                 Wolf wolf = (Wolf) animal;
-                wolf.setAnimalMemory("AdditionalBehaviour:", wolf.howl());
+                wolf.setAnimalMemory("AnimalAdditionalBehaviour:", wolf.howl());
                 break;
             case "Boar":
                 Boar boar = (Boar) animal;
-                boar.setAnimalMemory("AdditionalBehaviour:", boar.leaveAfterBreed());
+                boar.setAnimalMemory("AnimalAdditionalBehaviour:", boar.leaveAfterBreed());
                 break;
             case "Buffalo":
                 Buffalo bbuffalo = (Buffalo) animal;
-                bbuffalo.setAnimalMemory("AdditionalBehaviour:", bbuffalo.lickTheBaby());
+                bbuffalo.setAnimalMemory("AnimalAdditionalBehaviour:", bbuffalo.lickTheBaby());
                 break;
             case "Caterpillar":
                 Caterpillar caterpillar = (Caterpillar) animal;
-                caterpillar.setAnimalMemory("AdditionalBehaviour:", caterpillar.eatEmptyEggs());
+                caterpillar.setAnimalMemory("AnimalAdditionalBehaviour:", caterpillar.eatEmptyEggs());
                 break;
             case "Deer":
                 Deer deer = (Deer) animal;
-                deer.setAnimalMemory("AdditionalBehaviour:", deer.lickTheBaby());
+                deer.setAnimalMemory("AnimalAdditionalBehaviour:", deer.lickTheBaby());
                 break;
             case "Duck":
                 Duck duck = (Duck) animal;
-                duck.setAnimalMemory("AdditionalBehaviour:", duck.leadTheBabyToTheWater());
+                duck.setAnimalMemory("AnimalAdditionalBehaviour:", duck.leadTheBabyToTheWater());
                 break;
             case "Goat":
                 Goat goat = (Goat) animal;
-                goat.setAnimalMemory("AdditionalBehaviour:", goat.eatThePlacenta());
+                goat.setAnimalMemory("AnimalAdditionalBehaviour:", goat.eatThePlacenta());
                 break;
             case "Horse":
                 Horse horse = (Horse) animal;
-                horse.setAnimalMemory("AdditionalBehaviour:", horse.lickTheBaby());
+                horse.setAnimalMemory("AnimalAdditionalBehaviour:", horse.lickTheBaby());
                 break;
             case "Mouse":
                 Mouse mouse = (Mouse) animal;
-                mouse.setAnimalMemory("AdditionalBehaviour:", mouse.nurseTheBaby());
+                mouse.setAnimalMemory("AnimalAdditionalBehaviour:", mouse.nurseTheBaby());
                 break;
             case "Rabbit":
                 Rabbit rabbit = (Rabbit) animal;
-                rabbit.setAnimalMemory("AdditionalBehaviour:", rabbit.lickTheBaby());
+                rabbit.setAnimalMemory("AnimalAdditionalBehaviour:", rabbit.lickTheBaby());
                 break;
             case "Sheep":
                 Sheep sheep = (Sheep) animal;
-                sheep.setAnimalMemory("AdditionalBehaviour:", sheep.eatThePlacenta());
+                sheep.setAnimalMemory("AnimalAdditionalBehaviour:", sheep.eatThePlacenta());
                 break;
             case "Plant":
                 Plant plant = (Plant) animal;
-                plant.setAnimalMemory("AdditionalBehaviour:", plant.performPhotosynthesis());
+                plant.setAnimalMemory("AnimalAdditionalBehaviour:", plant.performPhotosynthesis());
                 break;
             default:
-                animal.setAnimalMemory("AdditionalBehaviour:", "Animal without a additional breed behaviour.");
+                animal.setAnimalMemory("AnimalAdditionalBehaviour:", "Animal without a additional breed behaviour.");
 
         }
     }

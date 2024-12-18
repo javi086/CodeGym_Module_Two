@@ -16,7 +16,7 @@ public class Wolf extends Animal implements Carnivore {
     }
 
     public String howl() {
-        return "The Wolf is happy and howls because of the new baby.";
+        return "The Wolf is happy and howls because of the new baby";
     }
 
     @Override

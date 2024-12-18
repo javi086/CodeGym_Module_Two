@@ -16,7 +16,7 @@ public class Boar extends Animal implements Herbivore {
     }
 
 public String leaveAfterBreed(){
-        return "The boar left and doesn't take care of the new baby.";
+        return "The boar left and doesn't take care of the new baby";
 }
 
 

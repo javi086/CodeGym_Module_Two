@@ -15,7 +15,7 @@ public class Deer extends Animal implements Herbivore {
     }
 
     public String lickTheBaby() {
-        return "The Deer is licking the new baby.";
+        return "The Deer is licking the new baby";
     }
 
     @Override

@@ -16,7 +16,7 @@ public class Bear extends Animal implements Carnivore {
     }
 
     public String breedNewBaby(){
-        return "The Bear breeds the new baby jealously.";
+        return "The Bear breeds the new baby jealously";
     }
 
     @Override

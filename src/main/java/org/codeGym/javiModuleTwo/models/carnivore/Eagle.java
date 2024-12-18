@@ -15,11 +15,11 @@ public class Eagle extends Animal implements  Carnivore{
     }
 
     public String trill(){ //Silbar
-        return "The Eagle trills because of the new baby.";
+        return "The Eagle trills because of the new baby";
     }
 
     @Override
     public String sniff() {
-        return "I'm sniffing looking for a possible prey.";
+        return "I'm sniffing looking for a possible prey";
     }
 }

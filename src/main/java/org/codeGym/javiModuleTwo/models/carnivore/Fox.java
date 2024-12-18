@@ -15,7 +15,7 @@ public class Fox extends Animal implements Carnivore{
     }
 
 public String cleanNewBaby(){
-        return "The Fox clean and keep close the new baby.";
+        return "The Fox clean and keep close the new baby";
 }
 
     @Override

@@ -14,7 +14,7 @@ public class Boa extends Animal implements Carnivore {
     }
 
     public String hideAndLeave(){
-        return "The Boa, hide the new baby and leave.";
+        return "The Boa, hide the new baby and leave";
     }
 
     @Override

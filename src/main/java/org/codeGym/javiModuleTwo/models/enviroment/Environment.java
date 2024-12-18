@@ -18,26 +18,21 @@ import java.util.stream.Collectors;
 public class Environment {
     private final int environmentRows;
     private final int environmentColumns;
-    private final int numberOfAnimalsPerCell;
+    private final int numberOfAnimalsInEachCell;
     private List<Animal>[][] animalContainer;
     private List<Integer>[][] numberOfAnimalsByCell;
     private List<Integer>[][] availableMovementsInEachCell;
     String[][] animalContainerRepresentation;
-    private List<Animal> livingCarnivores = new ArrayList<>();
-    private List<Animal> livingHerbivores = new ArrayList<>();
-    private List<Animal> livingAnimals = new ArrayList<>();
-    private List<Animal> livingPlants = new ArrayList<>();
-    private List<Animal> deadAnimals = new ArrayList<>();
 
     //Essential methods to set before starting the move, eat, reproduce actions.
     public Environment(int environmentRows, int environmentColumns, int AnimalsPerCell) {
         this.environmentRows = environmentRows;
         this.environmentColumns = environmentColumns;
-        this.numberOfAnimalsPerCell = AnimalsPerCell;
+        this.numberOfAnimalsInEachCell = AnimalsPerCell;
     }
 
     public void prepareEnvironment() {
-        System.out.printf("******List of tasks required for the environment preparation:*******%n"
+        System.out.printf("%n******List of tasks required for the environment preparation:*******%n"
                 + "1. Prepare arrays required.%n"
                 + "2. Determine randomly the number of animals by cell.%n"
                 + "3. Create and assign animals into each cell.%n"
@@ -47,15 +42,8 @@ public class Environment {
         determineNumberOfAnimalsByCell();
         createAnimalsByCode();
         determinePossibleMovements();
+        System.out.printf("%n*** Initial animal positions before moving. ****%n");
         displayAnimalLocation();
-    }
-
-    public List<Animal> getDeadAnimals() {
-        return deadAnimals;
-    }
-
-    public void setDeadAnimals(Animal animal) {
-        this.deadAnimals.add(animal);
     }
 
     public List<Integer>[][] getAvailableMovementsInEachCell() {
@@ -84,12 +72,10 @@ public class Environment {
     }
 
     public void determineNumberOfAnimalsByCell() {
-
         Random random = new Random();
-
         for (List<Integer>[] lists : numberOfAnimalsByCell) {
             for (int i = 0; i < lists.length; i++) {
-                lists[i].add(random.nextInt(numberOfAnimalsPerCell) + 1);
+                lists[i].add(random.nextInt(numberOfAnimalsInEachCell) + 1);
             }
         }
         for (int i = 0; i < environmentRows; i++) {
@@ -231,7 +217,7 @@ public class Environment {
     }
 
 
-    public void moveAnimal(Environment environmentInformation) {
+    public String moveAnimal(Environment environmentInformation) {
         System.out.println("Movement logic initiated");
         ExecutorService moveThreadPool = Executors.newFixedThreadPool(environmentRows * environmentColumns);
         Random random = new Random();
@@ -246,12 +232,13 @@ public class Environment {
                     int col = j;
                     final int radomMovement = movementsList.get(random.nextInt(movementsList.size()));
                     for (Animal animal : animalList) {
-                        moveThreadPool.submit(() -> {
-                            synchronized (animalContainer[row][col]) {
-                                animal.move(row, col, radomMovement, environmentInformation);
-
-                            }
-                        });
+                        if(animal.isAlive) {
+                            moveThreadPool.submit(() -> {
+                                synchronized (animalContainer[row][col]) {
+                                    animal.move(row, col, radomMovement, environmentInformation);
+                                }
+                            });
+                        }
                     }
                 } else {
                     for (Animal animal : animalList) {
@@ -269,11 +256,11 @@ public class Environment {
         } catch (InterruptedException e) {
             System.err.println("Thread pool interrupted: " + e.getMessage());
         }
-        System.out.println("Move logic completed successfully.");
+       return  "Move logic completed successfully.";
     }
 
 
-    public void eatAnotherAnimal(Environment environmentInformation) {
+    public String eatAnotherAnimal(Environment environmentInformation) {
         System.out.println("Eat logic initiated");
         ExecutorService eatThreadPool = Executors.newFixedThreadPool(environmentRows * environmentColumns);
         Plant plant = new Plant();
@@ -317,14 +304,13 @@ public class Environment {
         } catch (InterruptedException e) {
             System.err.println("Thread pool interrupted: " + e.getMessage());
         }
-        System.out.println("Eat logic completed successfully.");
+       return "Eat logic completed successfully.";
     }
 
 
-    public void breedAnimal(Environment environmentInformation) {
+    public String breedAnimal(Environment environmentInformation) {
         System.out.println("Breed logic initiated.");
         ExecutorService breedThreadPool = Executors.newFixedThreadPool(environmentRows * environmentColumns);
-
 
         for (int i = 0; i < environmentRows; i++) {
             for (int j = 0; j < environmentColumns; j++) {
@@ -367,13 +353,11 @@ public class Environment {
         } catch (InterruptedException e) {
             System.err.println("Thread pool interrupted: " + e.getMessage());
         }
-        System.out.println("Breed logic completed successfully.");
-
-
+        return "Breed logic completed successfully.";
     }
 
-    public void displayAnimalHistory() {
-        System.out.printf("%n**** RECORD OF ACTIONS FOR EACH ANIMAL ****%n");
+    public void displayAnimalMemories() {
+        System.out.printf("%n**** ACTIONS PERFORMED BY EACH ANIMAL IN EACH CELL ****%n");
 
         for (int i = 0; i < environmentRows; i++) {
             System.out.println("Row: " + i);
@@ -384,11 +368,43 @@ public class Environment {
                             .map(memory -> memory.getKey() + " " + memory.getValue()).sorted()
                             .collect(Collectors.joining(", ", "[", "]")));
                     System.out.println();
-
                 }
             }
         }
     }
+
+public void displayAnimalInformationInEnvironment() {
+int totalOfAnimalsCreated = 0;
+int totalOfAnimalsAlive = 0;
+int totalOFAnimalsDeath = 0;
+int totalOfCarnivores = 0;
+int totalOfHerbivores = 0;
+int totalOfPlants = 0;
+int totalOFNewBabies = 0;
+
+    for (int i = 0; i <environmentRows ; i++) {
+        for (int j = 0; j < environmentColumns; j++) {
+            totalOfAnimalsCreated += animalContainer[i][j].size();
+            totalOfAnimalsAlive += (int) animalContainer[i][j].stream().filter(Animal::isAlive).count();
+            totalOFAnimalsDeath += (int) animalContainer[i][j].stream().filter(animal -> !animal.isAlive()).count();
+            totalOfCarnivores += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Carnivore).count();
+            totalOfHerbivores += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Herbivore).count();
+            totalOfPlants += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Photosynthetic).count();
+            totalOFNewBabies += (int) animalContainer[i][j].stream().filter(animal -> animal.getAnimalMemory().containsValue("I'm the new baby")).count();
+        }
+        }
+    System.out.println("*** GENERAL INFORMATION +++");
+    System.out.printf("Total of animals created: %s %n", totalOfAnimalsCreated);
+    System.out.printf("Total of animals still alive: %s %n", totalOfAnimalsAlive);
+    System.out.printf("Total of animals  death: %s %n", totalOFAnimalsDeath);
+    System.out.printf("Total of Carnivores created: %s %n", totalOfCarnivores);
+    System.out.printf("Total of Herbivores created: %s %n", totalOfHerbivores);
+    System.out.printf("Total of Plants created: %s %n", totalOfPlants);
+    System.out.printf("Total of new babies: %s %n", totalOFNewBabies);
+
+
+
+}
 
 
 }

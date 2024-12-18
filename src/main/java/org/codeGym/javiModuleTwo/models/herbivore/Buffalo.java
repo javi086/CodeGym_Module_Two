@@ -15,7 +15,7 @@ public class Buffalo extends Animal implements Herbivore {
     }
 
    public String lickTheBaby() {
-        return "The Buffalo is licking the new baby.";
+        return "The Buffalo is licking the new baby";
    }
 
     @Override

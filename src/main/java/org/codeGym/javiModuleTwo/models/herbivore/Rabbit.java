@@ -15,7 +15,7 @@ public class Rabbit extends Animal implements Herbivore {
     }
 
     public String lickTheBaby() {
-        return "The Rabbit is licking the new baby.";
+        return "The Rabbit is licking the new baby";
     }
 
     @Override

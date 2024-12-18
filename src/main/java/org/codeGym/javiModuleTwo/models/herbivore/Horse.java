@@ -15,7 +15,7 @@ public class Horse extends Animal implements Herbivore {
     }
 
     public String lickTheBaby(){
-        return "The Horse licks the new baby.";
+        return "The Horse licks the new baby";
     }
 
 

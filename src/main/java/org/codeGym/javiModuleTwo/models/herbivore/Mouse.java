@@ -15,7 +15,7 @@ public class Mouse extends Animal implements Herbivore {
     }
 
     public String nurseTheBaby(){
-        return "The Mouse nurse the new baby for 21 days.";
+        return "The Mouse nurse the new baby for 21 days";
     }
 
     @Override

@@ -15,7 +15,7 @@ public class Duck extends Animal implements Herbivore {
     }
 
     public String leadTheBabyToTheWater() {
-        return "The Duck leads the new baby to the water.";
+        return "The Duck leads the new baby to the water";
     }
 
     @Override
