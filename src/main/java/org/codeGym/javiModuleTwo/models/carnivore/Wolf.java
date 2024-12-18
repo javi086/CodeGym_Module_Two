@@ -1,40 +1,27 @@
 package org.codeGym.javiModuleTwo.models.carnivore;
 
+import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.models.herbivore.Rabbit;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Wolf extends Animal implements Carnivore {
 
-
-
-    @Override
-    public boolean hunt(List<Animal> possiblePreyList) {
-        Random random = new Random();
-
-        for (Animal animal : possiblePreyList){
-            if (animal instanceof Rabbit){
-                animal.setPossibilityOfBeingEaten(60);
-            }
-
-        }
-return  true;
+    public Wolf(){
+        this.setTypeOfAnimal("Carnivore");
+        this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
 
-
-    @Override
-    public void breed() {
-        System.out.println("El lobo se esta reproduciendo");
+    public String howl() {
+        return "The Wolf is happy and howls because of the new baby";
     }
 
     @Override
-    public void die() {
-        System.out.println("El lobo se murio");
+    public String sniff() {
+        return "I'm sniffing looking for a possible prey.";
     }
-
-
 
 }

@@ -1,33 +1,27 @@
 package org.codeGym.javiModuleTwo.models.herbivore;
 
 
+import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Herbivore;
 
 import java.util.List;
 
 public class Boar extends Animal implements Herbivore {
 
-
-
-    public void eat(List<Animal> animalList) {
-
+    public Boar(){
+        this.setTypeOfAnimal("Herbivore");
+        this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
     }
+
+public String leaveAfterBreed(){
+        return "The boar left and doesn't take care of the new baby";
+}
 
 
     @Override
-    public void breed() {
-
-    }
-
-    @Override
-    public void die() {
-
-    }
-
-    @Override
-    public void pasture() {
-
+    public String pasture() {
+        return "I'm pasturing.";
     }
 }

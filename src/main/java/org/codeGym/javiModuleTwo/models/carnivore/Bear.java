@@ -1,32 +1,26 @@
 package org.codeGym.javiModuleTwo.models.carnivore;
 
 
+import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.models.enviroment.Enviroment;
 import org.codeGym.javiModuleTwo.services.Carnivore;
 
 import java.util.List;
 
 public class Bear extends Animal implements Carnivore {
 
+    public Bear(){
+        this.setTypeOfAnimal("Carnivore");
+        this.setAnimalMemory("Animal:", AvailableAnimals.getAvatarByAnimalName(this.getClass().getSimpleName()));
+        this.setAnimalMemory("AnimalType:", getTypeOfAnimal());
+    }
 
-    public void eat(List<Animal> animalList) {
-        System.out.println("El oso va a comer");
+    public String breedNewBaby(){
+        return "The Bear breeds the new baby jealously";
     }
 
     @Override
-    public void breed() {
-
-    }
-
-    @Override
-    public void die() {
-
-    }
-
-
-    @Override
-    public boolean hunt(List<Animal> preyList) {
-        return false;
+    public String sniff() {
+        return "I'm sniffing looking for a possible prey.";
     }
 }
