@@ -17,7 +17,6 @@ public enum AvailableAnimals {
     DUCK(13, "🦆"),
     CATERPILLAR(14, "🐛"),
     PLANT(15, "🌱");
-    //DEATH(00, "💀");
 
 
     private final int animalCode;

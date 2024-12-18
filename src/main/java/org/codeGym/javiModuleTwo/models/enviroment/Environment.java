@@ -232,7 +232,7 @@ public class Environment {
                     int col = j;
                     final int radomMovement = movementsList.get(random.nextInt(movementsList.size()));
                     for (Animal animal : animalList) {
-                        if(animal.isAlive) {
+                        if (animal.isAlive) {
                             moveThreadPool.submit(() -> {
                                 synchronized (animalContainer[row][col]) {
                                     animal.move(row, col, radomMovement, environmentInformation);
@@ -256,20 +256,16 @@ public class Environment {
         } catch (InterruptedException e) {
             System.err.println("Thread pool interrupted: " + e.getMessage());
         }
-       return  "Move logic completed successfully.";
+        return "Move logic completed successfully.";
     }
 
 
     public String eatAnotherAnimal(Environment environmentInformation) {
         System.out.println("Eat logic initiated");
         ExecutorService eatThreadPool = Executors.newFixedThreadPool(environmentRows * environmentColumns);
-        Plant plant = new Plant();
-
 
         for (int i = 0; i < environmentRows; i++) {
             for (int j = 0; j < environmentColumns; j++) {
-                animalContainer[0][0].clear();
-                animalContainer[0][0].add(plant);
                 List<Animal> animalList = new ArrayList<>(animalContainer[i][j]);
                 if (animalList.size() > 1) {
                     int row = i;
@@ -283,12 +279,12 @@ public class Environment {
                     }
                 } else {
                     for (Animal animal : animalList) {
-                        if(animal instanceof Herbivore){
-                            animal.setAnimalMemory("Eat:", "I'm alone and "+((Herbivore) animal).pasture());
+                        if (animal instanceof Herbivore) {
+                            animal.setAnimalMemory("Eat:", "I'm alone and " + ((Herbivore) animal).pasture());
                         } else if (animal instanceof Carnivore) {
-                            animal.setAnimalMemory("Eat:", "I'm alone and " +((Carnivore) animal).sniff());
-                        }else{
-                            animal.setAnimalMemory("Eat:", "I'm alone and " +((Photosynthetic) animal).performPhotosynthesis());
+                            animal.setAnimalMemory("Eat:", "I'm alone and " + ((Carnivore) animal).sniff());
+                        } else {
+                            animal.setAnimalMemory("Eat:", "I'm alone and " + ((Photosynthetic) animal).performPhotosynthesis());
                         }
 
                     }
@@ -304,7 +300,7 @@ public class Environment {
         } catch (InterruptedException e) {
             System.err.println("Thread pool interrupted: " + e.getMessage());
         }
-       return "Eat logic completed successfully.";
+        return "Eat logic completed successfully.";
     }
 
 
@@ -316,8 +312,8 @@ public class Environment {
             for (int j = 0; j < environmentColumns; j++) {
                 int row = i;
                 int col = j;
-                    List<Animal> animalsAliveLookingForPartner = new ArrayList<>(getAnimalContainer()[row][col].stream().
-                            filter(Animal::isAlive).collect(Collectors.toList()));
+                List<Animal> animalsAliveLookingForPartner = new ArrayList<>(getAnimalContainer()[row][col].stream().
+                        filter(Animal::isAlive).collect(Collectors.toList()));
 
                 breedThreadPool.submit(() -> {
 
@@ -325,14 +321,11 @@ public class Environment {
                         List<Animal> femaleAnimalList = new ArrayList<>();
                         for (Animal animalLookingForPartner : animalsAliveLookingForPartner) {
                             if (!animalLookingForPartner.isWithCouple()) {
-                               //System.out.printf("Row: %d, Col: %d\n", row, col);
-                               //System.out.printf("Looking for partners for animal %s and couple match %s sex: %s %n", animalLookingForPartner.getClass().getSimpleName(), animalLookingForPartner.isWithCouple(), animalLookingForPartner.getGender());
-                               //System.out.printf("Animals to breed before loop: %s from the cell[%s][%s]%n", femaleAnimalList, row, col);
                                 animalLookingForPartner.lookForPartner(animalLookingForPartner, animalsAliveLookingForPartner).ifPresent(femaleAnimalList::add);
                             }
                         }
                         synchronized (animalContainer[row][col]) {
-                            if (!femaleAnimalList.isEmpty()){
+                            if (!femaleAnimalList.isEmpty()) {
                                 for (Animal animal : femaleAnimalList) {
                                     animal.breed(animal, row, col, environmentInformation);
                                 }
@@ -373,38 +366,37 @@ public class Environment {
         }
     }
 
-public void displayAnimalInformationInEnvironment() {
-int totalOfAnimalsCreated = 0;
-int totalOfAnimalsAlive = 0;
-int totalOFAnimalsDeath = 0;
-int totalOfCarnivores = 0;
-int totalOfHerbivores = 0;
-int totalOfPlants = 0;
-int totalOFNewBabies = 0;
+    public void displayAnimalInformationInEnvironment() {
+        int totalOfAnimalsCreated = 0;
+        int totalOfAnimalsAlive = 0;
+        int totalOFAnimalsDeath = 0;
+        int totalOfCarnivores = 0;
+        int totalOfHerbivores = 0;
+        int totalOfPlants = 0;
+        int totalOFNewBabies = 0;
 
-    for (int i = 0; i <environmentRows ; i++) {
-        for (int j = 0; j < environmentColumns; j++) {
-            totalOfAnimalsCreated += animalContainer[i][j].size();
-            totalOfAnimalsAlive += (int) animalContainer[i][j].stream().filter(Animal::isAlive).count();
-            totalOFAnimalsDeath += (int) animalContainer[i][j].stream().filter(animal -> !animal.isAlive()).count();
-            totalOfCarnivores += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Carnivore).count();
-            totalOfHerbivores += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Herbivore).count();
-            totalOfPlants += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Photosynthetic).count();
-            totalOFNewBabies += (int) animalContainer[i][j].stream().filter(animal -> animal.getAnimalMemory().containsValue("I'm the new baby")).count();
+        for (int i = 0; i < environmentRows; i++) {
+            for (int j = 0; j < environmentColumns; j++) {
+                totalOfAnimalsCreated += animalContainer[i][j].size();
+                totalOfAnimalsAlive += (int) animalContainer[i][j].stream().filter(Animal::isAlive).count();
+                totalOFAnimalsDeath += (int) animalContainer[i][j].stream().filter(animal -> !animal.isAlive()).count();
+                totalOfCarnivores += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Carnivore).count();
+                totalOfHerbivores += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Herbivore).count();
+                totalOfPlants += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Photosynthetic).count();
+                totalOFNewBabies += (int) animalContainer[i][j].stream().filter(animal -> animal.getAnimalMemory().containsValue("I'm the new baby")).count();
+            }
         }
-        }
-    System.out.println("*** GENERAL INFORMATION +++");
-    System.out.printf("Total of animals created: %s %n", totalOfAnimalsCreated);
-    System.out.printf("Total of animals still alive: %s %n", totalOfAnimalsAlive);
-    System.out.printf("Total of animals  death: %s %n", totalOFAnimalsDeath);
-    System.out.printf("Total of Carnivores created: %s %n", totalOfCarnivores);
-    System.out.printf("Total of Herbivores created: %s %n", totalOfHerbivores);
-    System.out.printf("Total of Plants created: %s %n", totalOfPlants);
-    System.out.printf("Total of new babies: %s %n", totalOFNewBabies);
+        System.out.println("*** GENERAL INFORMATION +++");
+        System.out.printf("Total of animals created: %s %n", totalOfAnimalsCreated);
+        System.out.printf("Total of animals still alive: %s %n", totalOfAnimalsAlive);
+        System.out.printf("Total of animals  death: %s %n", totalOFAnimalsDeath);
+        System.out.printf("Total of Carnivores created: %s %n", totalOfCarnivores);
+        System.out.printf("Total of Herbivores created: %s %n", totalOfHerbivores);
+        System.out.printf("Total of Plants created: %s %n", totalOfPlants);
+        System.out.printf("Total of new babies: %s %n", totalOFNewBabies);
 
 
-
-}
+    }
 
 
 }

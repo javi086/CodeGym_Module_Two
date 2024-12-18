@@ -17,11 +17,6 @@ public class Plant  extends Animal implements Photosynthetic {
         this.setAnimalMemory("Eat:", "The plant is feeding from the ground");
     }
 
-    public String breed() {
-        return "The plant spreads its spores to another plant to reproduce";
-    }
-
-
     @Override
     public String performPhotosynthesis() {
         return "The plant is happy and implementing photosynthesis";
