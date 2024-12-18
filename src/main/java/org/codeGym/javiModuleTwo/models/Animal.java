@@ -216,7 +216,7 @@ public abstract class Animal {
 
         try {
             Animal babyAnimal = animal.getClass().getDeclaredConstructor().newInstance();
-            babyAnimal.setAnimalMemory("Breed:", "I'm the new baby");
+            babyAnimal.setAnimalMemory("Breed:", "I'm the new baby 🍼");
             newBabyAnimalList.add(babyAnimal);
             animal.setAnimalMemory("Breed:", "Yes, I gave birth to a baby " + AvailableAnimals.getAvatarByAnimalName(babyAnimal.getClass().getSimpleName()));
             AdditionalBreedBehaviour(animal);

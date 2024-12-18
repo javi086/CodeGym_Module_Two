@@ -47,7 +47,10 @@ public class Main {
                         System.out.println(eatResult);
                         System.out.println(breedResult);
 
-                        System.out.printf("%n*** Final animal positions. ***%n");
+                        System.out.printf("%n(In the following section, you will see new animal's positions, animals death and depending on the couples there could be new babies.");
+                        System.out.printf("%nYou can verify the detail of each animal in the section: ACTIONS PERFORMED BY EACH ANIMAL IN EACH CELL.)%n");
+                        System.out.printf("%n*** Final animal positions after all actions happened (Move, Eat, Breed). ***%n");
+
                           environment.displayAnimalLocation();
                           environment.displayAnimalInformationInEnvironment();
                           environment.displayAnimalMemories();

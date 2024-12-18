@@ -32,7 +32,7 @@ public class Environment {
     }
 
     public void prepareEnvironment() {
-        System.out.printf("%n******List of tasks required for the environment preparation:*******%n"
+        System.out.printf("%n****** List of tasks required for the environment preparation. *******%n"
                 + "1. Prepare arrays required.%n"
                 + "2. Determine randomly the number of animals by cell.%n"
                 + "3. Create and assign animals into each cell.%n"
@@ -42,7 +42,7 @@ public class Environment {
         determineNumberOfAnimalsByCell();
         createAnimalsByCode();
         determinePossibleMovements();
-        System.out.printf("%n*** Initial animal positions before moving. ****%n");
+        System.out.printf("%n*** Initial animal positions before anything happen. ****%n");
         displayAnimalLocation();
     }
 
@@ -350,7 +350,9 @@ public class Environment {
     }
 
     public void displayAnimalMemories() {
-        System.out.printf("%n**** ACTIONS PERFORMED BY EACH ANIMAL IN EACH CELL ****%n");
+        System.out.printf("%n**** ACTIONS PERFORMED BY EACH ANIMAL IN EACH CELL ****");
+        System.out.printf("%nAnimal death (💀)");
+        System.out.printf("%nNew babies, look for the section: Breed:I'm the new baby 🍼%n");
 
         for (int i = 0; i < environmentRows; i++) {
             System.out.println("Row: " + i);
@@ -359,7 +361,7 @@ public class Environment {
                 for (Animal animalList : animalContainer[i][j]) {
                     System.out.print(animalList.getAnimalMemory().entrySet().stream()
                             .map(memory -> memory.getKey() + " " + memory.getValue()).sorted()
-                            .collect(Collectors.joining(", ", "[", "]")));
+                            .collect(Collectors.joining(" | ", "[", "]")));
                     System.out.println();
                 }
             }
@@ -383,7 +385,7 @@ public class Environment {
                 totalOfCarnivores += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Carnivore).count();
                 totalOfHerbivores += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Herbivore).count();
                 totalOfPlants += (int) animalContainer[i][j].stream().filter(animal -> animal instanceof Photosynthetic).count();
-                totalOFNewBabies += (int) animalContainer[i][j].stream().filter(animal -> animal.getAnimalMemory().containsValue("I'm the new baby")).count();
+                totalOFNewBabies += (int) animalContainer[i][j].stream().filter(animal -> animal.getAnimalMemory().containsValue("I'm the new baby 🍼")).count();
             }
         }
         System.out.println("*** GENERAL INFORMATION +++");
