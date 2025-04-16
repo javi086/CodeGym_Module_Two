@@ -1,4 +1,4 @@
-package org.codeGym.javiModuleTwo.services;
+package org.codeGym.javiModuleTwo.interfaces;
 
 public interface Photosynthetic {
     String performPhotosynthesis();

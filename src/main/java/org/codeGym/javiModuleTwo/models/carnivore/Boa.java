@@ -3,7 +3,7 @@ package org.codeGym.javiModuleTwo.models.carnivore;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.services.Carnivore;
+import org.codeGym.javiModuleTwo.interfaces.Carnivore;
 
 public class Boa extends Animal implements Carnivore {
 

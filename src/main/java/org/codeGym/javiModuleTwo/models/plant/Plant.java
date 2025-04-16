@@ -1,9 +1,9 @@
-package org.codeGym.javiModuleTwo.models.Plant;
+package org.codeGym.javiModuleTwo.models.plant;
 
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.services.Photosynthetic;
+import org.codeGym.javiModuleTwo.interfaces.Photosynthetic;
 
 public class Plant  extends Animal implements Photosynthetic {
 

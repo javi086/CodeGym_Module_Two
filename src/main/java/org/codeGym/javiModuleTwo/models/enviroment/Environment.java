@@ -4,12 +4,12 @@ package org.codeGym.javiModuleTwo.models.enviroment;
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.config.constants.AvailableMovements;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.models.Plant.Plant;
+import org.codeGym.javiModuleTwo.models.plant.Plant;
 import org.codeGym.javiModuleTwo.models.carnivore.*;
 import org.codeGym.javiModuleTwo.models.herbivore.*;
-import org.codeGym.javiModuleTwo.services.Carnivore;
-import org.codeGym.javiModuleTwo.services.Herbivore;
-import org.codeGym.javiModuleTwo.services.Photosynthetic;
+import org.codeGym.javiModuleTwo.interfaces.Carnivore;
+import org.codeGym.javiModuleTwo.interfaces.Herbivore;
+import org.codeGym.javiModuleTwo.interfaces.Photosynthetic;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -266,29 +266,30 @@ public class Environment {
 
         for (int i = 0; i < environmentRows; i++) {
             for (int j = 0; j < environmentColumns; j++) {
-                List<Animal> animalList = new ArrayList<>(animalContainer[i][j]);
-                if (animalList.size() > 1) {
-                    int row = i;
-                    int col = j;
-                    for (Animal animal : animalList) {
-                        eatThreadPool.submit(() -> {
-                            synchronized (animalContainer[row][col]) {
-                                animal.eat(animalList, environmentInformation, row, col);
-                            }
-                        });
-                    }
-                } else {
-                    for (Animal animal : animalList) {
-                        if (animal instanceof Herbivore) {
-                            animal.setAnimalMemory("Eat:", "I'm alone and " + ((Herbivore) animal).pasture());
-                        } else if (animal instanceof Carnivore) {
-                            animal.setAnimalMemory("Eat:", "I'm alone and " + ((Carnivore) animal).sniff());
-                        } else {
-                            animal.setAnimalMemory("Eat:", "I'm alone and " + ((Photosynthetic) animal).performPhotosynthesis());
-                        }
+                final int row = i;
+                final int col = j;
+                eatThreadPool.submit(() -> {
+                    synchronized (animalContainer[row][col]) {
+                        List<Animal> animalList = new ArrayList<>(animalContainer[row][col]);
 
+                        if (animalList.size() > 1) {
+                            Animal dummyAnimal = new Animal() {
+                            };
+                            dummyAnimal.eat(animalList, environmentInformation, row, col);
+                        } else if (!animalList.isEmpty()) {
+                            Animal animal = animalList.get(0);
+
+
+                            if (animal instanceof Herbivore) {
+                                animal.setAnimalMemory("Eat:", "I'm alone and " + ((Herbivore) animal).pasture());
+                            } else if (animal instanceof Carnivore) {
+                                animal.setAnimalMemory("Eat:", "I'm alone and " + ((Carnivore) animal).sniff());
+                            } else {
+                                animal.setAnimalMemory("Eat:", "I'm alone and " + ((Photosynthetic) animal).performPhotosynthesis());
+                            }
+                        }
                     }
-                }
+                });
             }
         }
         eatThreadPool.shutdown();
@@ -299,6 +300,7 @@ public class Environment {
             }
         } catch (InterruptedException e) {
             System.err.println("Thread pool interrupted: " + e.getMessage());
+            Thread.currentThread().interrupt();
         }
         return "Eat logic completed successfully.";
     }
@@ -316,23 +318,24 @@ public class Environment {
                         filter(Animal::isAlive).collect(Collectors.toList()));
 
                 breedThreadPool.submit(() -> {
-
-                    if (animalsAliveLookingForPartner.size() > 1) {
-                        List<Animal> femaleAnimalList = new ArrayList<>();
-                        for (Animal animalLookingForPartner : animalsAliveLookingForPartner) {
-                            if (!animalLookingForPartner.isWithCouple()) {
-                                animalLookingForPartner.lookForPartner(animalLookingForPartner, animalsAliveLookingForPartner).ifPresent(femaleAnimalList::add);
+                    synchronized (animalContainer[row][col]) {
+                        if (animalsAliveLookingForPartner.size() > 1) {
+                            List<Animal> femaleAnimalList = new ArrayList<>();
+                            for (Animal animalLookingForPartner : animalsAliveLookingForPartner) {
+                                if (!animalLookingForPartner.isWithCouple()) {
+                                    animalLookingForPartner.lookForPartner(animalLookingForPartner, animalsAliveLookingForPartner).ifPresent(femaleAnimalList::add);
+                                }
                             }
-                        }
-                        synchronized (animalContainer[row][col]) {
+
                             if (!femaleAnimalList.isEmpty()) {
                                 for (Animal animal : femaleAnimalList) {
                                     animal.breed(animal, row, col, environmentInformation);
                                 }
                             }
+
+                        } else {
+                            animalsAliveLookingForPartner.get(0).setAnimalMemory("Breed:", "I'm alone there is no one to breed here 😨");
                         }
-                    } else {
-                        animalsAliveLookingForPartner.get(0).setAnimalMemory("Breed:", "I'm alone there is no one to breed here 😨");
                     }
                 });
             }

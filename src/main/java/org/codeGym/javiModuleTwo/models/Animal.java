@@ -1,12 +1,10 @@
 package org.codeGym.javiModuleTwo.models;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
-import org.codeGym.javiModuleTwo.models.Plant.Plant;
+import org.codeGym.javiModuleTwo.models.plant.Plant;
 import org.codeGym.javiModuleTwo.models.carnivore.*;
 import org.codeGym.javiModuleTwo.models.enviroment.Environment;
 import org.codeGym.javiModuleTwo.models.herbivore.*;
-import org.codeGym.javiModuleTwo.services.Carnivore;
-import org.codeGym.javiModuleTwo.services.Herbivore;
 
 import java.util.*;
 
@@ -136,55 +134,72 @@ public abstract class Animal {
         String hunterMemoryMessage = "The %s (%s) ate a %s (%s) in cell [%d][%d]";
         String preyMemoryMessage = "The %s (%s) was eaten by %s (%s) in cell [%d][%d]";
         String memoryMessageFormatted;
-        Set<Integer> animalsChoosenRandomlyOrEatenAsAPrey = new HashSet<>();
+        List<Animal> animalListCopy = new ArrayList<>((animalListInCell)); //Preventing the concurrent error
+        List<Animal> animalsToRemove = new ArrayList<>();
+        Set<Integer> processedAnimalIndices = new HashSet<>();
         Map<Animal, Integer> possibilityOfBeEaten = new HashMap<>();
 
-        while (animalsChoosenRandomlyOrEatenAsAPrey.size() < animalListInCell.size()) {
-            possibilityOfBeEaten.clear();
-            int hunterRandomlySelected = random.nextInt(animalListInCell.size());
-            Animal hunter = animalListInCell.get(hunterRandomlySelected);
-            if (animalsChoosenRandomlyOrEatenAsAPrey.add(hunterRandomlySelected) && hunter.isHungry() && hunter.isAlive) {
-                //Verify possibility of be eaten for each animal
-                for (Animal prey : animalListInCell) {
-                    if (!prey.equals(hunter) && prey.isAlive) {
-                        verifyPossibilityOfBeEaten(hunter, prey);
-                        possibilityOfBeEaten.put(prey, prey.getPossibilityOfBeingEaten());
-                    }
+        //Processing animal a potential hunter
+        while (processedAnimalIndices.size() < animalListInCell.size()) {
+            int hunterIndex;
+            do {
+                hunterIndex = random.nextInt(animalListCopy.size());
+            } while (processedAnimalIndices.contains(hunterIndex));
+
+            processedAnimalIndices.add(hunterIndex);
+            Animal hunter = animalListCopy.get(hunterIndex);
+
+            //int hunterRandomlySelected = random.nextInt(animalListInCell.size());
+            //Animal hunter = animalListInCell.get(hunterRandomlySelected);
+
+            if (!hunter.isHungry() || !hunter.isAlive() || hunter instanceof Plant) {
+                if (hunter instanceof Plant) {
+                    ((Plant) hunter).eat();
                 }
-                //Determine animal to be eaten based on max possibility obtained, except for plants
-                if (!(hunter instanceof Plant)) {
-                    Animal mostLikekyAnimalOfBeEaten = possibilityOfBeEaten.entrySet()
-                            .stream()
-                            .max(Map.Entry.comparingByValue())
-                            .map(Map.Entry::getKey)
-                            .orElse(null);
-                    if (mostLikekyAnimalOfBeEaten != null && mostLikekyAnimalOfBeEaten.getPossibilityOfBeingEaten() > 0) {
-                        //hunter information
-                        hunter.setHungry(false);
-                        memoryMessageFormatted = String.format(hunterMemoryMessage,
-                                AvailableAnimals.getAvatarByAnimalName(hunter.getClass().getSimpleName()),
-                                hunter.getClass().getSimpleName(),
-                                AvailableAnimals.getAvatarByAnimalName(mostLikekyAnimalOfBeEaten.getClass().getSimpleName()),
-                                mostLikekyAnimalOfBeEaten.getClass().getSimpleName(), row, col);
-                        hunter.setAnimalMemory("Eat:", memoryMessageFormatted);
+                continue;
+            }
 
-
-                        //prey information
-                        mostLikekyAnimalOfBeEaten.setAlive(false);
-                        memoryMessageFormatted = String.format(preyMemoryMessage,
-                                AvailableAnimals.getAvatarByAnimalName(mostLikekyAnimalOfBeEaten.getClass().getSimpleName()),
-                                mostLikekyAnimalOfBeEaten.getClass().getSimpleName(),
-                                AvailableAnimals.getAvatarByAnimalName(hunter.getClass().getSimpleName()),
-                                hunter.getClass().getSimpleName(), row, col);
-                        mostLikekyAnimalOfBeEaten.setAnimalMemory("Eat:", memoryMessageFormatted);
-                        animalListInCell.remove(mostLikekyAnimalOfBeEaten);
-                    } else {
-                        animalListInCell.get(hunterRandomlySelected).setAnimalMemory("Eat:", "There are more animals but none of them is a possible prey");
-                    }
-                } else if (animalListInCell.get(hunterRandomlySelected) instanceof Plant) {
-                    ((Plant) animalListInCell.get(hunterRandomlySelected)).eat();
+            //Verify possibility of be eaten for each animal
+            for (Animal prey : animalListCopy) {
+                if (!prey.equals(hunter) && prey.isAlive() && !animalsToRemove.contains(prey)) {
+                    verifyPossibilityOfBeEaten(hunter, prey);
+                    possibilityOfBeEaten.put(prey, prey.getPossibilityOfBeingEaten());
                 }
             }
+            //Determine animal to be eaten based on max possibility obtained, except for plants
+            Animal mostLikekyAnimalOfBeEaten = possibilityOfBeEaten.entrySet()
+                    .stream()
+                    .max(Map.Entry.comparingByValue())
+                    .map(Map.Entry::getKey)
+                    .orElse(null);
+
+            if (mostLikekyAnimalOfBeEaten != null && mostLikekyAnimalOfBeEaten.getPossibilityOfBeingEaten() > 0) {
+                //hunter information
+                hunter.setHungry(false);
+                memoryMessageFormatted = String.format(hunterMemoryMessage,
+                        AvailableAnimals.getAvatarByAnimalName(hunter.getClass().getSimpleName()),
+                        hunter.getClass().getSimpleName(),
+                        AvailableAnimals.getAvatarByAnimalName(mostLikekyAnimalOfBeEaten.getClass().getSimpleName()),
+                        mostLikekyAnimalOfBeEaten.getClass().getSimpleName(), row, col);
+                hunter.setAnimalMemory("Eat:", memoryMessageFormatted);
+
+                //Update prey information
+                mostLikekyAnimalOfBeEaten.setAlive(false);
+                memoryMessageFormatted = String.format(preyMemoryMessage,
+                        AvailableAnimals.getAvatarByAnimalName(mostLikekyAnimalOfBeEaten.getClass().getSimpleName()),
+                        mostLikekyAnimalOfBeEaten.getClass().getSimpleName(),
+                        AvailableAnimals.getAvatarByAnimalName(hunter.getClass().getSimpleName()),
+                        hunter.getClass().getSimpleName(), row, col);
+                mostLikekyAnimalOfBeEaten.setAnimalMemory("Eat:", memoryMessageFormatted);
+
+                //animalListInCell.remove(mostLikekyAnimalOfBeEaten);
+                animalsToRemove.add(mostLikekyAnimalOfBeEaten);
+            } else {
+                hunter.setAnimalMemory("Eat:", "There are more animals but none of them is a possible prey");
+            }
+        }
+        synchronized (animalListInCell) {
+            animalListInCell.removeAll(animalsToRemove);
         }
     }
 

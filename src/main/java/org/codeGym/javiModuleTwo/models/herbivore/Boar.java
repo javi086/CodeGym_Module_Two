@@ -3,9 +3,7 @@ package org.codeGym.javiModuleTwo.models.herbivore;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.services.Herbivore;
-
-import java.util.List;
+import org.codeGym.javiModuleTwo.interfaces.Herbivore;
 
 public class Boar extends Animal implements Herbivore {
 

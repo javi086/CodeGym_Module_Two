@@ -2,10 +2,7 @@ package org.codeGym.javiModuleTwo.models.carnivore;
 
 import org.codeGym.javiModuleTwo.config.constants.AvailableAnimals;
 import org.codeGym.javiModuleTwo.models.Animal;
-import org.codeGym.javiModuleTwo.services.Carnivore;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.codeGym.javiModuleTwo.interfaces.Carnivore;
 
 public class Wolf extends Animal implements Carnivore {
 
